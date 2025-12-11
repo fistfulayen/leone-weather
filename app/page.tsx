@@ -5,6 +5,7 @@ import CurrentWeather from '@/components/CurrentWeather';
 import AirQualityCard from '@/components/AirQualityCard';
 import TodaySummary from '@/components/TodaySummary';
 import ChatInterface from '@/components/ChatInterface';
+import LeoneNarrative from '@/components/LeoneNarrative';
 
 export default function Home() {
   const [currentData, setCurrentData] = useState<any>(null);
@@ -67,10 +68,16 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Current Weather - Full Width */}
-        {currentData && <CurrentWeather data={currentData} />}
+        {/* Top Grid - Weather + Leone's Narrative */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Current Weather */}
+          {currentData && <CurrentWeather data={currentData} />}
 
-        {/* Grid Layout */}
+          {/* Leone's Weather Report */}
+          <LeoneNarrative />
+        </div>
+
+        {/* Bottom Grid - Today Summary + Air Quality */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           {/* Today Summary */}
           {currentData && <TodaySummary current={currentData.current} />}
