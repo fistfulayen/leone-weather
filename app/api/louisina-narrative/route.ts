@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { anthropic } from '@/lib/claude';
-import { getAQILevel } from '@/lib/air-quality';
 
 export async function GET() {
   try {
@@ -28,9 +27,6 @@ export async function GET() {
     const todayHigh = todayReadings?.[0]?.temp_c;
     const todayLow = todayReadings?.[todayReadings.length - 1]?.temp_c;
 
-    // Build weather context
-    const aqiLevel = current.aqi ? getAQILevel(current.aqi) : null;
-
     // Get current time in Italy timezone to determine time of day
     const now = new Date();
     const italyTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
@@ -55,9 +51,6 @@ export async function GET() {
       wind_gust_kmh: current.wind_gust_kmh,
       rain_rate: current.rain_rate_mmh,
       rain_today: current.rain_day_mm,
-      aqi: current.aqi,
-      aqi_level: aqiLevel?.level,
-      pm25: current.pm25_ugm3,
       barometer: current.barometer_mmhg,
       today_high: todayHigh,
       today_low: todayLow,
@@ -73,7 +66,6 @@ Humidity: ${weatherContext.humidity?.toFixed(0)}%
 Wind: ${weatherContext.wind_speed_kmh?.toFixed(1)} km/h${weatherContext.wind_gust_kmh ? ` (gusts to ${weatherContext.wind_gust_kmh.toFixed(1)} km/h)` : ''}
 ${weatherContext.rain_rate && weatherContext.rain_rate > 0 ? `Rain: ${weatherContext.rain_rate.toFixed(1)} mm/h` : 'No rain'}
 ${weatherContext.rain_today && weatherContext.rain_today > 0 ? `Rain today: ${weatherContext.rain_today.toFixed(1)} mm` : ''}
-Air Quality: ${weatherContext.aqi_level} (AQI ${weatherContext.aqi?.toFixed(0)})
 Barometric pressure: ${weatherContext.barometer?.toFixed(0)} mmHg
 
 Write a passionate, 3-4 paragraph narrative (200-250 words max) that includes:
