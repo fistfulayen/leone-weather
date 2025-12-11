@@ -202,3 +202,40 @@ export function getAQIHealthGuidance(aqi: number): string {
     return 'Limit time outdoors. Keep windows closed. Sensitive groups should avoid outdoor activities.';
   }
 }
+
+/**
+ * Calculate NowCast AQI using EPA's NowCast algorithm
+ * Uses last 12 hours of hourly data, weighting recent measurements more heavily
+ * @param hourlyReadings Array of AQI values from most recent to oldest (up to 12 hours)
+ */
+export function calculateNowCastAQI(hourlyReadings: number[]): number | null {
+  // Need at least 2 hours of data, prefer 12
+  if (hourlyReadings.length < 2) {
+    return null;
+  }
+
+  // Take up to 12 most recent hours
+  const readings = hourlyReadings.slice(0, 12);
+
+  // Find min and max
+  const max = Math.max(...readings);
+  const min = Math.min(...readings);
+
+  // Calculate weight factor
+  // w = 1 - (max - min) / max, with minimum of 0.5
+  let w = max > 0 ? 1 - (max - min) / max : 0.5;
+  w = Math.max(w, 0.5);
+
+  // Calculate weighted average
+  // NowCast = (c₁×w⁰ + c₂×w¹ + c₃×w² + ...) / (w⁰ + w¹ + w² + ...)
+  let weightedSum = 0;
+  let weightSum = 0;
+
+  for (let i = 0; i < readings.length; i++) {
+    const weight = Math.pow(w, i);
+    weightedSum += readings[i] * weight;
+    weightSum += weight;
+  }
+
+  return weightSum > 0 ? weightedSum / weightSum : null;
+}

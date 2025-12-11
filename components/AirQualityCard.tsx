@@ -3,6 +3,7 @@
 interface AirQualityCardProps {
   data: {
     aqi: number;
+    nowcastAQI?: number | null;
     pm25?: number;
     pm10?: number;
     level: string;
@@ -28,7 +29,7 @@ export default function AirQualityCard({ data }: AirQualityCardProps) {
     );
   }
 
-  const { aqi, pm25, pm10, level, color, story, healthGuidance, comparisons } = data;
+  const { aqi, nowcastAQI, pm25, pm10, level, color, story, healthGuidance, comparisons } = data;
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
@@ -41,10 +42,24 @@ export default function AirQualityCard({ data }: AirQualityCardProps) {
             style={{ backgroundColor: color }}
           />
           <span className="text-xl font-medium">{level}</span>
-          <span className="text-gray-500 ml-auto">AQI {aqi.toFixed(1)}</span>
         </div>
+
+        {/* NowCast AQI (smoothed) */}
+        {nowcastAQI !== null && nowcastAQI !== undefined && (
+          <div className="mb-2">
+            <span className="text-sm text-gray-600">NowCast AQI: </span>
+            <span className="text-lg font-semibold">{nowcastAQI.toFixed(1)}</span>
+          </div>
+        )}
+
+        {/* Current AQI (instantaneous) */}
+        <div className="mb-2">
+          <span className="text-sm text-gray-600">Current AQI: </span>
+          <span className="text-lg font-medium">{aqi.toFixed(1)}</span>
+        </div>
+
         <div className="text-xs text-gray-500 mt-1">
-          Davis AirLink sensor · Instantaneous reading · EU EEA European index
+          Davis AirLink sensor · EU EEA European index
         </div>
       </div>
 
