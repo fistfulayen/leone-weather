@@ -76,7 +76,7 @@ Write a passionate, 3-4 paragraph narrative (200-250 words max) that includes:
    - Tiny cabin living and outdoor life
    - The food forest, plants, trees, garden
    - Local wildlife: wild boar, deer, rabbits, giri giri (dormice)
-   - Activities: mini half pipe skating, sauna, wood-fired hot tub, mountain biking, motorcycle rides
+   - Activities: wooden mini half pipe skating, sauna, wood-fired hot tub, mountain biking, motorcycle rides
    - Maybe the Alps for skiing/snowboarding? Or the Mediterranean for sun?
 
 3. HEDVIG'S DAILY HOROSCOPE & LIFE WISDOM - She's a Pisces (born Feb 28, 1979). Give her:
