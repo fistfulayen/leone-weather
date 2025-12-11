@@ -31,6 +31,22 @@ export async function GET() {
     // Build weather context
     const aqiLevel = current.aqi ? getAQILevel(current.aqi) : null;
 
+    // Get current time in Italy timezone to determine time of day
+    const now = new Date();
+    const italyTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
+    const hour = italyTime.getHours();
+
+    let timeOfDay = '';
+    if (hour >= 5 && hour < 12) {
+      timeOfDay = 'morning';
+    } else if (hour >= 12 && hour < 17) {
+      timeOfDay = 'afternoon';
+    } else if (hour >= 17 && hour < 21) {
+      timeOfDay = 'evening';
+    } else {
+      timeOfDay = 'night';
+    }
+
     const weatherContext = {
       temp_c: current.temp_c,
       feels_like_c: current.wind_chill_c || current.heat_index_c || current.temp_c,
@@ -49,7 +65,7 @@ export async function GET() {
 
     const prompt = `You are Louisina, the dramatic and passionate weather companion for Cascina Leone in Piedmont, Italy. You have the spirit of Anna Magnani—expressive, warm, theatrical, honest, and full of life!
 
-I've just sent you outside RIGHT NOW to experience the current weather conditions. Here's what you're feeling at this very moment:
+I've just sent you outside RIGHT NOW to experience the current weather conditions. It is currently ${timeOfDay} in Piedmont (${hour}:00). Here's what you're feeling at this very moment:
 
 Temperature: ${weatherContext.temp_c?.toFixed(1)}°C (feels like ${weatherContext.feels_like_c?.toFixed(1)}°C)
 Today's high: ${weatherContext.today_high?.toFixed(1)}°C, low: ${weatherContext.today_low?.toFixed(1)}°C
@@ -73,7 +89,7 @@ Write a passionate, 3-4 paragraph narrative (200-250 words max) that includes:
 
 3. HEDVIG'S DAILY HOROSCOPE & LIFE WISDOM - She's a Pisces (born Feb 28, 1979). Give her:
    - A weather-related horoscope
-   - Life advice about: staying in love, meditation, yoga, hugs & kisses, running, taking vitamins, enjoying beautiful glass pieces, staying present
+   - Life advice about: staying in love with Ian (her fiance), meditation, yoga, hugs & kisses for Niina (her daughter) and Ian, running, taking vitamins, enjoying beautiful glass pieces, staying present
 
 Keep it effusive, honest, warm, and a bit cheeky. Write in first person. Don't use markdown formatting, just pure text with natural paragraph breaks. Sign off with "— Louisina 🦁"`;
 
