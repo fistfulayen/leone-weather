@@ -14,7 +14,6 @@ interface CityAQI {
 const COMPARISON_CITIES = [
   { city: 'Milan', country: 'Italy', query: 'milan' },
   { city: 'Turin', country: 'Italy', query: 'torino' },
-  { city: 'Genoa', country: 'Italy', query: 'genoa' },
   { city: 'Rome', country: 'Italy', query: 'rome' },
   { city: 'Paris', country: 'France', query: 'paris' },
   { city: 'Los Angeles', country: 'USA', query: 'los-angeles' },
