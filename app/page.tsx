@@ -6,12 +6,14 @@ import AirQualityCard from '@/components/AirQualityCard';
 import TodaySummary from '@/components/TodaySummary';
 import ChatInterface from '@/components/ChatInterface';
 import LeoneNarrative from '@/components/LeoneNarrative';
+import { getHeaderEmoji } from '@/lib/weather-emoji';
 
 export default function Home() {
   const [currentData, setCurrentData] = useState<any>(null);
   const [airQualityData, setAirQualityData] = useState<any>(null);
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substring(7)}`);
   const [lastUpdate, setLastUpdate] = useState<string>('');
+  const [headerEmoji, setHeaderEmoji] = useState<string>('☀️');
 
   useEffect(() => {
     fetchData();
@@ -35,6 +37,14 @@ export default function Home() {
             timeZone: 'Europe/Rome',
           }));
         }
+
+        // Calculate header emoji based on weather and time
+        if (data.current && data.sunriseDate && data.sunsetDate) {
+          const sunrise = new Date(data.sunriseDate);
+          const sunset = new Date(data.sunsetDate);
+          const emoji = getHeaderEmoji(data.current, sunrise, sunset);
+          setHeaderEmoji(emoji);
+        }
       }
 
       // Fetch air quality
@@ -54,7 +64,7 @@ export default function Home() {
         {/* Header */}
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">☀️ Cascina Leone</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{headerEmoji} Cascina Leone</h1>
           </div>
           <div className="text-sm text-gray-700 font-medium">
             {new Date().toLocaleDateString('en-GB', {

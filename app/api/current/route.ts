@@ -48,8 +48,8 @@ export async function GET() {
 
     // Get sunrise and sunset times
     const sunTimes = getSunTimes();
-    const sunrise = formatTime(sunTimes.sunrise);
-    const sunset = formatTime(sunTimes.sunset);
+    const sunriseTime = formatTime(sunTimes.sunrise);
+    const sunsetTime = formatTime(sunTimes.sunset);
 
     // Generate insights
     const summary = generateCurrentConditionsSummary(current);
@@ -65,8 +65,10 @@ export async function GET() {
       pressureTrend,
       rainHint,
       timestamp: current.timestamp,
-      sunrise,
-      sunset,
+      sunrise: sunriseTime,
+      sunset: sunsetTime,
+      sunriseDate: sunTimes.sunrise.toISOString(),
+      sunsetDate: sunTimes.sunset.toISOString(),
       todayHigh,
       todayHighTime,
       todayLow,
