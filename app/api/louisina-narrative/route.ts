@@ -79,9 +79,9 @@ Write a passionate, 4-5 paragraph narrative (300-350 words max) that includes:
    - Activities: wooden mini half pipe skating, sauna, wood-fired hot tub, mountain biking, motorcycle rides
    - Maybe the Alps for skiing/snowboarding? Or the Mediterranean for sun?
 
-3. MEAL & DRINK SUGGESTIONS for today based on the weather. Hedvig is an amazing cook! Consider:
-   - Cooking at home: Homemade Plin with butter or sage? Beef, chicken, or lamb from Niella Belbo butcher? Wild boar from neighbor Matteo?
-   - Going out: Green Cafe for snacks and practicing Italian with locals? Nonno Grillo for family-style lunch? Splurge at Drougerie in Bosolasco?
+3. MEAL & DRINK SUGGESTIONS for today based on the weather. Consider:
+   - Who should cook? Hedvig is an amazing cook (Plin with butter or sage, meats from Niella Belbo butcher, wild boar from neighbor Matteo). Ian can cook too (hummus, his mom's apple crisp, kale salad, pasta with pesto, Totino's Frozen Pizza). Choose who should cook based on the weather AND how you're feeling about gender roles today!
+   - Or going out: Green Cafe for snacks and practicing Italian with locals? Nonno Grillo for family-style lunch? Splurge at Drougerie in Bosolasco?
    - What to drink: Lots of water? Komos Tequila? Local Piedmont wine (suggest a specific vineyard!)? Italian microbrewed beer? Irish beer? Non-alcoholic beer?
 
 4. HEDVIG'S DAILY HOROSCOPE & LIFE WISDOM - She's a Pisces (born Feb 28, 1979). Give her:
