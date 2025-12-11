@@ -3,22 +3,48 @@ import { Reading } from './supabase';
 export function generateCurrentConditionsSummary(current: Reading | null): string {
   if (!current) return 'No current data available';
 
-  const temp = current.temp_c?.toFixed(1);
-  const feelsLike = current.wind_chill_c?.toFixed(1) || current.heat_index_c?.toFixed(1) || temp;
+  // Determine time of day
+  const now = new Date();
+  const hour = now.getHours();
+  let timeOfDay = '';
 
-  let summary = `${temp}°C`;
-
-  if (feelsLike && feelsLike !== temp) {
-    summary += `, feels like ${feelsLike}°C`;
+  if (hour >= 5 && hour < 12) {
+    timeOfDay = 'This morning';
+  } else if (hour >= 12 && hour < 17) {
+    timeOfDay = 'This afternoon';
+  } else if (hour >= 17 && hour < 21) {
+    timeOfDay = 'This evening';
+  } else {
+    timeOfDay = 'Tonight';
   }
 
   // Add condition description
   const conditions: string[] = [];
 
+  // Rain assessment (prioritize this)
+  if (current.rain_rate_mmh !== undefined && current.rain_rate_mmh > 0) {
+    if (current.rain_rate_mmh > 10) {
+      conditions.push('Heavy rain');
+    } else if (current.rain_rate_mmh > 2.5) {
+      conditions.push('Moderate rain');
+    } else {
+      conditions.push('Light rain');
+    }
+  } else {
+    // If no rain, assess cloudiness/clarity based on humidity and other factors
+    if (current.humidity !== undefined && current.humidity > 80) {
+      conditions.push('Overcast and humid');
+    } else if (current.humidity !== undefined && current.humidity < 40) {
+      conditions.push('Clear and dry');
+    } else {
+      conditions.push('Partly cloudy');
+    }
+  }
+
   // Temperature assessment
   if (current.temp_c !== undefined) {
     if (current.temp_c < 0) {
-      conditions.push('freezing cold');
+      conditions.push('freezing');
     } else if (current.temp_c < 5) {
       conditions.push('cold');
     } else if (current.temp_c < 15) {
@@ -29,15 +55,6 @@ export function generateCurrentConditionsSummary(current: Reading | null): strin
       conditions.push('warm');
     } else {
       conditions.push('hot');
-    }
-  }
-
-  // Humidity assessment
-  if (current.humidity !== undefined) {
-    if (current.humidity > 80) {
-      conditions.push('very humid');
-    } else if (current.humidity > 60) {
-      conditions.push('humid');
     }
   }
 
@@ -52,18 +69,7 @@ export function generateCurrentConditionsSummary(current: Reading | null): strin
     }
   }
 
-  // Rain assessment
-  if (current.rain_rate_mmh !== undefined && current.rain_rate_mmh > 0) {
-    if (current.rain_rate_mmh > 10) {
-      conditions.push('heavy rain');
-    } else if (current.rain_rate_mmh > 2.5) {
-      conditions.push('moderate rain');
-    } else {
-      conditions.push('light rain');
-    }
-  }
-
-  return conditions.join(', ');
+  return `${timeOfDay}: ${conditions.join(', ')}`;
 }
 
 export function getPressureTrend(
