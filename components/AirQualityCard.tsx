@@ -43,6 +43,9 @@ export default function AirQualityCard({ data }: AirQualityCardProps) {
           <span className="text-xl font-medium">{level}</span>
           <span className="text-gray-500 ml-auto">AQI {aqi.toFixed(1)}</span>
         </div>
+        <div className="text-xs text-gray-500 mt-1">
+          Davis AirLink sensor · Instantaneous reading · EU EEA European index
+        </div>
       </div>
 
       <div className="text-sm text-gray-700 space-y-3 mb-4 whitespace-pre-line">
