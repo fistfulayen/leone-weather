@@ -170,10 +170,13 @@ export function generateAQIStory(currentAQI: number, comparisons: CityAQI[]): st
     story += `Your air quality is better than ${percentile}% of major cities worldwide.\n\n`;
   }
 
-  // Show comparison to a few key cities
-  const keyComparisons = ['Milan', 'Paris', 'Los Angeles', 'Shanghai']
+  // Show comparison to all Italian cities first, then select international cities
+  const italianCities = sorted.filter(c => c.country === 'Italy');
+  const internationalCities = ['Paris', 'Los Angeles', 'Shanghai']
     .map(city => sorted.find(c => c.city === city))
     .filter(Boolean);
+
+  const keyComparisons = [...italianCities, ...internationalCities];
 
   if (keyComparisons.length > 0) {
     story += 'Compared to right now:\n';
