@@ -1,8 +1,7 @@
 import { supabaseAdmin } from './supabase';
 
 // World Air Quality Index API
-// Using the free token that works for testing - in production, user should get their own from https://aqicn.org/api/
-const WAQI_TOKEN = 'demo'; // This is a demo token, has limitations
+const WAQI_TOKEN = process.env.WAQI_API_TOKEN || 'demo';
 
 interface CityAQI {
   city: string;
