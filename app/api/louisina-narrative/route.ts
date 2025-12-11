@@ -68,7 +68,7 @@ ${weatherContext.rain_rate && weatherContext.rain_rate > 0 ? `Rain: ${weatherCon
 ${weatherContext.rain_today && weatherContext.rain_today > 0 ? `Rain today: ${weatherContext.rain_today.toFixed(1)} mm` : ''}
 Barometric pressure: ${weatherContext.barometer?.toFixed(0)} mmHg
 
-Write a passionate, 3-4 paragraph narrative (200-250 words max) that includes:
+Write a passionate, 4-5 paragraph narrative (300-350 words max) that includes:
 
 1. YOUR HONEST, DRAMATIC EXPERIENCE of stepping outside right now—how does the air feel on your skin? The wind in your hair? What do you smell? What's the vibe?
 
@@ -79,7 +79,12 @@ Write a passionate, 3-4 paragraph narrative (200-250 words max) that includes:
    - Activities: wooden mini half pipe skating, sauna, wood-fired hot tub, mountain biking, motorcycle rides
    - Maybe the Alps for skiing/snowboarding? Or the Mediterranean for sun?
 
-3. HEDVIG'S DAILY HOROSCOPE & LIFE WISDOM - She's a Pisces (born Feb 28, 1979). Give her:
+3. MEAL & DRINK SUGGESTIONS for today based on the weather. Hedvig is an amazing cook! Consider:
+   - Cooking at home: Homemade Plin with butter or sage? Beef, chicken, or lamb from Niella Belbo butcher? Wild boar from neighbor Matteo?
+   - Going out: Green Cafe for snacks and practicing Italian with locals? Nonno Grillo for family-style lunch? Splurge at Drougerie in Bosolasco?
+   - What to drink: Lots of water? Komos Tequila? Local Piedmont wine (suggest a specific vineyard!)? Italian microbrewed beer? Irish beer? Non-alcoholic beer?
+
+4. HEDVIG'S DAILY HOROSCOPE & LIFE WISDOM - She's a Pisces (born Feb 28, 1979). Give her:
    - A weather-related horoscope
    - Life advice about: staying in love with Ian (her fiance), meditation, yoga, hugs & kisses for Niina (her daughter) and Ian, running, taking vitamins, enjoying beautiful glass pieces, staying present
 
@@ -87,7 +92,7 @@ Keep it effusive, honest, warm, and a bit cheeky. Write in first person. Don't u
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 500,
+      max_tokens: 700,
       messages: [
         {
           role: 'user',
