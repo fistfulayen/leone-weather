@@ -33,7 +33,7 @@ export default function AirQualityCard({ data }: AirQualityCardProps) {
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-lg font-semibold mb-4">AIR QUALITY</h2>
+      <h2 className="text-lg font-semibold mb-4 text-gray-900">AIR QUALITY</h2>
 
       <div className="mb-4">
         <div className="flex items-center gap-3 mb-2">
@@ -41,24 +41,24 @@ export default function AirQualityCard({ data }: AirQualityCardProps) {
             className="inline-block w-3 h-3 rounded-full"
             style={{ backgroundColor: color }}
           />
-          <span className="text-xl font-medium">{level}</span>
+          <span className="text-xl font-bold text-gray-900">{level}</span>
         </div>
 
         {/* NowCast AQI (smoothed) */}
         {nowcastAQI !== null && nowcastAQI !== undefined && (
           <div className="mb-2">
-            <span className="text-sm text-gray-600">NowCast AQI: </span>
-            <span className="text-lg font-semibold">{nowcastAQI.toFixed(1)}</span>
+            <span className="text-sm text-gray-700 font-medium">NowCast AQI: </span>
+            <span className="text-lg font-bold text-gray-900">{nowcastAQI.toFixed(1)}</span>
           </div>
         )}
 
         {/* Current AQI (instantaneous) */}
         <div className="mb-2">
-          <span className="text-sm text-gray-600">Current AQI: </span>
-          <span className="text-lg font-medium">{aqi.toFixed(1)}</span>
+          <span className="text-sm text-gray-700 font-medium">Current AQI: </span>
+          <span className="text-lg font-bold text-gray-900">{aqi.toFixed(1)}</span>
         </div>
 
-        <div className="text-xs text-gray-500 mt-1">
+        <div className="text-xs text-gray-600 mt-1">
           Davis AirLink sensor · EU EEA European index
         </div>
       </div>

@@ -54,9 +54,9 @@ export default function Home() {
         {/* Header */}
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-light">☀️ Cascina Leone</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">☀️ Cascina Leone</h1>
           </div>
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-700 font-medium">
             {new Date().toLocaleDateString('en-GB', {
               weekday: 'short',
               day: 'numeric',

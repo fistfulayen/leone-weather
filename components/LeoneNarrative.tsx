@@ -30,16 +30,16 @@ export default function LeoneNarrative() {
   if (loading) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6 h-full">
-        <h2 className="text-lg font-semibold mb-4">LOUISINA&apos;S WEATHER REPORT 🦁</h2>
-        <p className="text-gray-500 italic">Louisina is stepping outside to feel the weather...</p>
+        <h2 className="text-lg font-semibold mb-4 text-gray-900">LOUISINA&apos;S WEATHER REPORT 🦁</h2>
+        <p className="text-gray-600 italic">Louisina is stepping outside to feel the weather...</p>
       </div>
     );
   }
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 h-full">
-      <h2 className="text-lg font-semibold mb-4">LOUISINA&apos;S WEATHER REPORT 🦁</h2>
-      <div className="text-gray-700 whitespace-pre-line leading-relaxed text-sm">
+      <h2 className="text-lg font-semibold mb-4 text-gray-900">LOUISINA&apos;S WEATHER REPORT 🦁</h2>
+      <div className="text-gray-800 whitespace-pre-line leading-relaxed text-sm">
         {narrative}
       </div>
     </div>

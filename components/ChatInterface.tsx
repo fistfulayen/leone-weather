@@ -62,11 +62,11 @@ export default function ChatInterface({ sessionId }: { sessionId: string }) {
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-lg font-semibold mb-4">💬 Ask Louisina</h2>
+      <h2 className="text-lg font-semibold mb-4 text-gray-900">💬 Ask Louisina</h2>
 
       <div className="space-y-4 mb-4 max-h-96 overflow-y-auto">
         {messages.length === 0 && (
-          <div className="text-gray-500 text-sm italic">
+          <div className="text-gray-600 text-sm italic">
             Ciao! I'm Louisina, your dramatic weather companion! Ask me anything about the weather, darling...
           </div>
         )}
