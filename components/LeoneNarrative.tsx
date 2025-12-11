@@ -8,20 +8,20 @@ export default function LeoneNarrative() {
 
   useEffect(() => {
     fetchNarrative();
-    // Refresh every 15 minutes
-    const interval = setInterval(fetchNarrative, 15 * 60 * 1000);
+    // Refresh every 5 minutes to stay current
+    const interval = setInterval(fetchNarrative, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
   const fetchNarrative = async () => {
     try {
-      const res = await fetch('/api/leone-narrative');
+      const res = await fetch('/api/louisina-narrative');
       if (res.ok) {
         const data = await res.json();
         setNarrative(data.narrative);
       }
     } catch (error) {
-      console.error('Error fetching Leone narrative:', error);
+      console.error('Error fetching Louisina narrative:', error);
     } finally {
       setLoading(false);
     }
@@ -30,16 +30,16 @@ export default function LeoneNarrative() {
   if (loading) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6 h-full">
-        <h2 className="text-lg font-semibold mb-4">LEONE&apos;S WEATHER REPORT 🦁</h2>
-        <p className="text-gray-500 italic">Leone is stepping outside to feel the weather...</p>
+        <h2 className="text-lg font-semibold mb-4">LOUISINA&apos;S WEATHER REPORT 🦁</h2>
+        <p className="text-gray-500 italic">Louisina is stepping outside to feel the weather...</p>
       </div>
     );
   }
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 h-full">
-      <h2 className="text-lg font-semibold mb-4">LEONE&apos;S WEATHER REPORT 🦁</h2>
-      <div className="text-gray-700 whitespace-pre-line leading-relaxed">
+      <h2 className="text-lg font-semibold mb-4">LOUISINA&apos;S WEATHER REPORT 🦁</h2>
+      <div className="text-gray-700 whitespace-pre-line leading-relaxed text-sm">
         {narrative}
       </div>
     </div>

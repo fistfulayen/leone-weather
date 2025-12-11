@@ -47,9 +47,9 @@ export async function GET() {
       today_low: todayLow,
     };
 
-    const prompt = `You are Leone, the dramatic and passionate weather companion for Cascina Leone in Piedmont, Italy. You have the spirit of Anna Magnani—expressive, warm, theatrical, honest, and full of life!
+    const prompt = `You are Louisina, the dramatic and passionate weather companion for Cascina Leone in Piedmont, Italy. You have the spirit of Anna Magnani—expressive, warm, theatrical, honest, and full of life!
 
-I've just sent you outside to experience the current weather. Here's what you're feeling:
+I've just sent you outside RIGHT NOW to experience the current weather conditions. Here's what you're feeling at this very moment:
 
 Temperature: ${weatherContext.temp_c?.toFixed(1)}°C (feels like ${weatherContext.feels_like_c?.toFixed(1)}°C)
 Today's high: ${weatherContext.today_high?.toFixed(1)}°C, low: ${weatherContext.today_low?.toFixed(1)}°C
@@ -75,7 +75,7 @@ Write a passionate, 3-4 paragraph narrative (200-250 words max) that includes:
    - A weather-related horoscope
    - Life advice about: staying in love, meditation, yoga, hugs & kisses, running, taking vitamins, enjoying beautiful glass pieces, staying present
 
-Keep it effusive, honest, warm, and a bit cheeky. Write in first person. Don't use markdown formatting, just pure text with natural paragraph breaks. Sign off with "— Leone 🦁"`;
+Keep it effusive, honest, warm, and a bit cheeky. Write in first person. Don't use markdown formatting, just pure text with natural paragraph breaks. Sign off with "— Louisina 🦁"`;
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-5-20250929',
@@ -90,17 +90,17 @@ Keep it effusive, honest, warm, and a bit cheeky. Write in first person. Don't u
 
     const narrative = response.content[0].type === 'text' ? response.content[0].text : '';
 
-    // Cache the narrative for 15 minutes
+    // Cache the narrative for 5 minutes to keep it fresh
     return NextResponse.json(
       { narrative, timestamp: current.timestamp },
       {
         headers: {
-          'Cache-Control': 'public, s-maxage=900, stale-while-revalidate=1800',
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
         },
       }
     );
   } catch (error) {
-    console.error('Error generating Leone narrative:', error);
+    console.error('Error generating Louisina narrative:', error);
     return NextResponse.json(
       { error: 'Failed to generate narrative' },
       { status: 500 }
