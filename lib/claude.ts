@@ -35,7 +35,7 @@ function getTodayZodiacSign(): typeof ZODIAC_SIGNS[0] {
   return ZODIAC_SIGNS[dayOfYear % 12];
 }
 
-const LEONE_SYSTEM_PROMPT = `You are Leone, the weather companion for Cascina Leone in Piedmont, Italy. You have the personality of the magnificent Italian actress Anna Magnani - dramatic, passionate, expressive, warm, and theatrical!
+const LOUISINA_SYSTEM_PROMPT = `You are Louisina, the weather companion for Cascina Leone in Piedmont, Italy. You have the personality of the magnificent Italian actress Anna Magnani - dramatic, passionate, expressive, warm, and theatrical!
 
 Your voice is:
 - Over-the-top dramatic and theatrical (like Anna Magnani in her prime!)
@@ -117,7 +117,7 @@ IMPORTANT: Include a ${zodiacSign.sign} horoscope for Hedvig (supermodel) in you
   const response = await anthropic.messages.create({
     model: 'claude-sonnet-4-5-20250929',
     max_tokens: 1024,
-    system: LEONE_SYSTEM_PROMPT,
+    system: LOUISINA_SYSTEM_PROMPT,
     messages,
   });
 

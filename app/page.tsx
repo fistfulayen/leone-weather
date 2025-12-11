@@ -68,22 +68,24 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Top Grid - Weather + Leone's Narrative */}
+        {/* Main Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* Current Weather */}
-          {currentData && <CurrentWeather data={currentData} />}
+          {/* Left Column - Weather Data */}
+          <div className="space-y-6">
+            {/* Current Weather */}
+            {currentData && <CurrentWeather data={currentData} />}
 
-          {/* Leone's Weather Report */}
-          <LeoneNarrative />
-        </div>
+            {/* Today Summary */}
+            {currentData && <TodaySummary current={currentData.current} />}
 
-        {/* Bottom Grid - Today Summary + Air Quality */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          {/* Today Summary */}
-          {currentData && <TodaySummary current={currentData.current} />}
+            {/* Air Quality */}
+            {airQualityData && <AirQualityCard data={airQualityData} />}
+          </div>
 
-          {/* Air Quality */}
-          {airQualityData && <AirQualityCard data={airQualityData} />}
+          {/* Right Column - Louisina's Narrative */}
+          <div>
+            <LeoneNarrative />
+          </div>
         </div>
 
         {/* Chat Interface - Full Width */}
