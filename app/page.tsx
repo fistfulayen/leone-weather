@@ -26,11 +26,14 @@ export default function Home() {
       if (currentRes.ok) {
         const data = await currentRes.json();
         setCurrentData(data);
-        setLastUpdate(new Date().toLocaleTimeString('en-GB', {
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'Europe/Rome',
-        }));
+        // Use the actual timestamp from when the cron job last pulled data
+        if (data.timestamp) {
+          setLastUpdate(new Date(data.timestamp).toLocaleTimeString('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Europe/Rome',
+          }));
+        }
       }
 
       // Fetch air quality
