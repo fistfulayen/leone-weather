@@ -43,22 +43,22 @@ export default function CurrentWeather({ data }: CurrentWeatherProps) {
       {/* Main temperature display */}
       <div className="flex items-start justify-between mb-4">
         <div>
-          <div className="text-5xl font-light mb-2">{temp}°C</div>
-          <div className="text-gray-600 mb-3">
+          <div className="text-5xl font-bold mb-2 text-gray-900">{temp}°C</div>
+          <div className="text-gray-700 mb-3">
             Feels like {feelsLike}°C · Humidity {humidity}%
           </div>
         </div>
 
         {/* Sun times */}
-        <div className="text-right text-sm text-gray-600">
+        <div className="text-right text-sm text-gray-700">
           <div>☀️ ↑ {sunrise}</div>
           <div>☀️ ↓ {sunset}</div>
         </div>
       </div>
 
       {/* Summary */}
-      <div className="text-gray-700 space-y-1 mb-4">
-        <p className="capitalize font-medium">{summary}</p>
+      <div className="text-gray-800 space-y-1 mb-4">
+        <p className="capitalize font-semibold">{summary}</p>
         {rainHint && <p className="text-sm">{rainHint}</p>}
       </div>
 
@@ -66,25 +66,25 @@ export default function CurrentWeather({ data }: CurrentWeatherProps) {
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
         {todayHigh !== null && todayHighTime && (
           <div>
-            <div className="text-gray-500 text-xs">High</div>
-            <div className="font-semibold">{todayHigh.toFixed(1)}°C</div>
-            <div className="text-gray-500 text-xs">{formatTimeFromISO(todayHighTime)}</div>
+            <div className="text-gray-600 text-xs font-medium">High</div>
+            <div className="font-bold text-lg text-gray-900">{todayHigh.toFixed(1)}°C</div>
+            <div className="text-gray-600 text-xs">{formatTimeFromISO(todayHighTime)}</div>
           </div>
         )}
 
         {todayLow !== null && todayLowTime && (
           <div>
-            <div className="text-gray-500 text-xs">Low</div>
-            <div className="font-semibold">{todayLow.toFixed(1)}°C</div>
-            <div className="text-gray-500 text-xs">{formatTimeFromISO(todayLowTime)}</div>
+            <div className="text-gray-600 text-xs font-medium">Low</div>
+            <div className="font-bold text-lg text-gray-900">{todayLow.toFixed(1)}°C</div>
+            <div className="text-gray-600 text-xs">{formatTimeFromISO(todayLowTime)}</div>
           </div>
         )}
 
         {pressureTrend && (
           <div>
-            <div className="text-gray-500 text-xs">Pressure</div>
-            <div className="font-semibold">{current.barometer_mmhg?.toFixed(0)} mmHg</div>
-            <div className="text-gray-500 text-xs">{pressureTrend}</div>
+            <div className="text-gray-600 text-xs font-medium">Pressure</div>
+            <div className="font-bold text-lg text-gray-900">{current.barometer_mmhg?.toFixed(0)} mmHg</div>
+            <div className="text-gray-600 text-xs">{pressureTrend}</div>
           </div>
         )}
       </div>
