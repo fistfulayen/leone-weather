@@ -5,20 +5,23 @@ const STATION_ID = process.env.WEATHERLINK_STATION_ID!;
 interface WeatherlinkResponse {
   sensors: Array<{
     data: Array<{
+      // Outdoor sensor (type 37)
       temp?: number;
       hum?: number;
       dew_point?: number;
       heat_index?: number;
       wind_chill?: number;
       wind_speed_avg_last_10_min?: number;
-      wind_dir_of_prevail?: number;
+      wind_dir_scalar_avg_last_10_min?: number;
       wind_speed_hi_last_10_min?: number;
-      rainfall_daily?: number;
-      rain_rate_hi?: number;
+      rainfall_day_mm?: number;
+      rain_rate_hi_mm?: number;
+      // Barometer sensor (type 242)
       bar_sea_level?: number;
+      // Indoor sensor (type 365)
       temp_in?: number;
       hum_in?: number;
-      // Air quality sensors
+      // Air quality sensor (type 323)
       pm_1?: number;
       pm_2p5?: number;
       pm_10?: number;
