@@ -115,41 +115,42 @@ export function getAQILevel(aqi: number): {
   color: string;
   description: string;
 } {
-  if (aqi <= 15) {
+  // EU EEA European Air Quality Index thresholds
+  if (aqi <= 10) {
     return {
-      level: 'Excellent',
+      level: 'Good',
       color: '#10b981',
-      description: 'Cleaner than a mountain forest. Among the best air in Europe right now.',
+      description: 'Excellent air quality—like a mountain forest. Among the best air in Europe.',
+    };
+  } else if (aqi <= 20) {
+    return {
+      level: 'Fair',
+      color: '#84cc16',
+      description: 'Fair air quality. Similar to a clear day in the Alps.',
     };
   } else if (aqi <= 25) {
     return {
-      level: 'Excellent',
-      color: '#10b981',
-      description: 'Excellent—like a clear day in the Alps. Better than 90% of European cities.',
+      level: 'Moderate',
+      color: '#eab308',
+      description: 'Moderate air quality. Acceptable for most people.',
     };
   } else if (aqi <= 50) {
     return {
-      level: 'Good',
-      color: '#84cc16',
-      description: 'Good air. Similar to a quiet day in a small Italian town away from traffic.',
-    };
-  } else if (aqi <= 100) {
-    return {
-      level: 'Moderate',
-      color: '#eab308',
-      description: 'Moderate. Comparable to a typical day in Milan\'s suburbs. Sensitive people may notice.',
-    };
-  } else if (aqi <= 150) {
-    return {
-      level: 'Unhealthy for Sensitive Groups',
+      level: 'Poor',
       color: '#f97316',
-      description: 'Like standing near a busy road. Consider keeping windows closed.',
+      description: 'Poor air quality. Sensitive individuals may experience respiratory symptoms.',
+    };
+  } else if (aqi <= 75) {
+    return {
+      level: 'Very Poor',
+      color: '#ef4444',
+      description: 'Very poor air quality. Everyone may begin to experience health effects.',
     };
   } else {
     return {
-      level: 'Unhealthy',
-      color: '#ef4444',
-      description: 'Urban pollution levels. Limit time outdoors, keep windows closed.',
+      level: 'Extremely Poor',
+      color: '#991b1b',
+      description: 'Extremely poor air quality. Health alert—everyone may experience serious effects.',
     };
   }
 }
