@@ -223,7 +223,7 @@ ${narrative}
     // Send email via Resend
     const { data, error } = await resend.emails.send({
       from: 'Louisina at Cascina Leone <weather@altalanga.love>',
-      to: ['hedvig@maigre.com', 'ian@ian.io'],
+      to: ['hedvigmaigre@me.com', 'fistfulayen@gmail.com'],
       subject: `${emoji} Your Daily Weather Report - Cascina Leone`,
       html: emailHtml,
     });
