@@ -66,7 +66,7 @@ export default function ChatInterface({ sessionId }: { sessionId: string }) {
 
       <div className="space-y-4 mb-4 max-h-96 overflow-y-auto">
         {messages.length === 0 && (
-          <div className="text-gray-600 text-sm italic">
+          <div className="text-gray-800 text-sm italic font-medium">
             Ciao! I'm Louisina, your dramatic weather companion! Ask me anything about the weather, darling...
           </div>
         )}
@@ -80,13 +80,13 @@ export default function ChatInterface({ sessionId }: { sessionId: string }) {
                 : 'bg-gray-50 mr-8'
             }`}
           >
-            <div className="text-sm whitespace-pre-wrap">{message.content}</div>
+            <div className="text-sm font-medium text-gray-900 whitespace-pre-wrap">{message.content}</div>
           </div>
         ))}
 
         {isLoading && (
           <div className="bg-gray-50 p-3 rounded-lg mr-8">
-            <div className="text-sm text-gray-500 italic">Louisina is thinking dramatically...</div>
+            <div className="text-sm text-gray-800 italic font-medium">Louisina is thinking dramatically...</div>
           </div>
         )}
 
@@ -99,7 +99,7 @@ export default function ChatInterface({ sessionId }: { sessionId: string }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Is it a good day to air out the house?"
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium placeholder:text-gray-500 placeholder:font-normal"
           disabled={isLoading}
         />
         <button
