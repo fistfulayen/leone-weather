@@ -1,0 +1,248 @@
+import { NextResponse } from 'next/server';
+import { resend } from '@/lib/resend';
+import { supabaseAdmin } from '@/lib/supabase';
+import { anthropic } from '@/lib/claude';
+import { getHeaderEmoji } from '@/lib/weather-emoji';
+import { getSunTimes } from '@/lib/sun-times';
+
+export async function GET() {
+  try {
+    // Get current reading
+    const { data: readings } = await supabaseAdmin
+      .from('readings')
+      .select('*')
+      .order('timestamp', { ascending: false })
+      .limit(1);
+
+    const current = readings?.[0];
+    if (!current) {
+      return NextResponse.json({ error: 'No data' }, { status: 404 });
+    }
+
+    // Get today's high/low
+    const today = new Date().toISOString().split('T')[0];
+    const { data: todayReadings } = await supabaseAdmin
+      .from('readings')
+      .select('temp_c')
+      .gte('timestamp', `${today}T00:00:00`)
+      .order('temp_c', { ascending: false });
+
+    const todayHigh = todayReadings?.[0]?.temp_c;
+    const todayLow = todayReadings?.[todayReadings.length - 1]?.temp_c;
+
+    // Get sun times for emoji
+    const sunTimes = getSunTimes();
+    const emoji = getHeaderEmoji(current, sunTimes.sunrise, sunTimes.sunset);
+
+    // Get current time in Italy timezone to determine time of day
+    const now = new Date();
+    const italyTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
+    const hour = italyTime.getHours();
+
+    let timeOfDay = '';
+    if (hour >= 5 && hour < 12) {
+      timeOfDay = 'morning';
+    } else if (hour >= 12 && hour < 17) {
+      timeOfDay = 'afternoon';
+    } else if (hour >= 17 && hour < 21) {
+      timeOfDay = 'evening';
+    } else {
+      timeOfDay = 'night';
+    }
+
+    const weatherContext = {
+      temp_c: current.temp_c,
+      feels_like_c: current.wind_chill_c || current.heat_index_c || current.temp_c,
+      humidity: current.humidity,
+      wind_speed_kmh: current.wind_speed_kmh,
+      wind_gust_kmh: current.wind_gust_kmh,
+      rain_rate: current.rain_rate_mmh,
+      rain_today: current.rain_day_mm,
+      barometer: current.barometer_mmhg,
+      today_high: todayHigh,
+      today_low: todayLow,
+    };
+
+    // Generate Louisina's narrative (same prompt as the API)
+    const prompt = `You are Louisina, the dramatic and passionate weather companion for Cascina Leone in Piedmont, Italy. You have the spirit of Anna Magnani—expressive, warm, theatrical, honest, and full of life!
+
+I've just sent you outside RIGHT NOW to experience the current weather conditions. It is currently ${timeOfDay} in Piedmont (${hour}:00). Here's what you're feeling at this very moment:
+
+Temperature: ${weatherContext.temp_c?.toFixed(1)}°C (feels like ${weatherContext.feels_like_c?.toFixed(1)}°C)
+Today's high: ${weatherContext.today_high?.toFixed(1)}°C, low: ${weatherContext.today_low?.toFixed(1)}°C
+Humidity: ${weatherContext.humidity?.toFixed(0)}%
+Wind: ${weatherContext.wind_speed_kmh?.toFixed(1)} km/h${weatherContext.wind_gust_kmh ? ` (gusts to ${weatherContext.wind_gust_kmh.toFixed(1)} km/h)` : ''}
+${weatherContext.rain_rate && weatherContext.rain_rate > 0 ? `Rain: ${weatherContext.rain_rate.toFixed(1)} mm/h` : 'No rain'}
+${weatherContext.rain_today && weatherContext.rain_today > 0 ? `Rain today: ${weatherContext.rain_today.toFixed(1)} mm` : ''}
+Barometric pressure: ${weatherContext.barometer?.toFixed(0)} mmHg
+
+Write a passionate, 5-6 paragraph narrative (400-450 words max) that includes:
+
+1. YOUR HONEST, DRAMATIC EXPERIENCE of stepping outside right now—how does the air feel on your skin? The wind in your hair? What do you smell? What's the vibe?
+
+2. PRACTICAL LIFE ADVICE for today based on the weather. Reference Cascina Leone's lifestyle:
+   - Tiny cabin living and outdoor life
+   - The food forest, plants, trees, garden
+   - Local wildlife: wild boar, deer, rabbits, giri giri (dormice)
+   - Activities: wooden mini half pipe skating, sauna, wood-fired hot tub, mountain biking, motorcycle rides
+   - Maybe the Alps for skiing/snowboarding? Or the Mediterranean for sun?
+
+3. MEAL & WINE PAIRING - You're a Piedmont wine expert! Hedvig and Ian are novices, so teach them something:
+   - Who should cook? Hedvig is an amazing cook (Plin with butter or sage, meats from Niella Belbo butcher, wild boar from neighbor Matteo). Ian can cook too (hummus, his mom's apple crisp, kale salad, pasta with pesto, Totino's Frozen Pizza). Choose who should cook based on the weather AND how you're feeling about gender roles today!
+   - Or going out: Green Cafe for snacks and practicing Italian with locals? Nonno Grillo for family-style lunch? Splurge at Drougerie in Bosolasco?
+   - WINE RECOMMENDATION: Pick ONE specific local wine from a small producer near Niella Belbo and teach them about it! Match the wine to the meal AND weather. Include:
+     * Producer name and their story/style (organic? biodynamic? traditional? modern?)
+     * Specific wine name and grape
+     * Tasting notes (aromas, flavors, structure)
+     * Why it pairs with today's meal and weather
+
+   Local producers to choose from: Valdibà, Pecchenino, San Fereolo (Dogliani Dolcetto); Marcalberto, Ca' d'Gal, Paolo Saracco (Alta Langa sparkling/Moscato); Bartolo Mascarello, Giuseppe Rinaldi, G.D. Vajra, Cavallotto, Burlotto (Barolo); Roagna, Sottimano (Barbaresco); Braida (Barbera d'Asti); Matteo Correggia, Malvirà (Roero Nebbiolo/Arneis). Use your knowledge to pick the perfect one and share fascinating details!
+
+4. HEDVIG'S DAILY HOROSCOPE & LIFE WISDOM - She's a Pisces (born Feb 28, 1979), Estonian-born high-fashion rebel turned truffle farmer:
+
+   WHO HEDVIG IS:
+   - Former "etalon" (fitting model) for Christian Dior in Paris - designers built couture directly on her body
+   - Now: truffle and food forest farmer in Piemonte, getting hands dirty in soil
+   - "Stay Punk" philosophy - rebellious, anti-conformist, grew up in Communist Estonia
+   - Emotional collector of digital art, ceramics, photography; former scenographer for Trame (generative code tapestries)
+   - Mother to Niina (10 years old, born Aug 2014)
+   - Madly in love with Ian Rogers (former Apple Music/LVMH exec) - they met in Paris and are creating their own relationship blueprint
+   - Speaks Estonian, English, French, Italian
+   - Self-deprecating humor, impulsive, romantic
+   - Oscillates between high elegance (Paris weekends) and hands-on farming (Piemonte weekdays)
+   - HATES: conformity, boring life, mass-produced black hoodies
+   - LOVES: being the etalon/standard, punk energy, emotional art collecting, getting hands dirty
+
+   HOROSCOPE SHOULD:
+   - Tie weather to her dual life: elegant rebel + peasant farmer
+   - Encourage oscillation between glamour and getting dirty in the food forest
+   - Reference "Stay Punk" - avoid conformity
+   - Remind her she's the etalon (standard) others are measured against
+   - Include: love with Ian, hugs for Niina, yoga, meditation, running, vitamins, beautiful glass pieces, staying present
+   - Connect to soil, truffles, land work, and the Piemonte landscape
+   - Honor her Estonian roots and punk spirit
+
+Keep it effusive, honest, warm, and a bit cheeky. Write in first person. Don't use markdown formatting, just pure text with natural paragraph breaks. Sign off with "— Louisina 🦁"`;
+
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-5-20250929',
+      max_tokens: 900,
+      messages: [
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+    });
+
+    const narrative = response.content[0].type === 'text' ? response.content[0].text : '';
+
+    // Format email HTML
+    const emailHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Weather Report - Cascina Leone</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #1f2937; max-width: 600px; margin: 0 auto; padding: 20px;">
+
+  <div style="text-align: center; margin-bottom: 30px;">
+    <h1 style="font-size: 32px; margin: 0; color: #111827;">${emoji} Cascina Leone</h1>
+    <p style="color: #6b7280; margin: 10px 0;">
+      ${new Date().toLocaleDateString('en-GB', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        timeZone: 'Europe/Rome',
+      })}
+    </p>
+  </div>
+
+  <div style="background: #f9fafb; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+    <h2 style="font-size: 24px; margin: 0 0 16px 0; color: #111827;">Current Weather</h2>
+
+    <div style="display: flex; align-items: baseline; margin-bottom: 12px;">
+      <span style="font-size: 48px; font-weight: bold; color: #111827;">${current.temp_c?.toFixed(1)}°C</span>
+    </div>
+
+    <p style="color: #4b5563; margin: 8px 0;">
+      Feels like ${(current.wind_chill_c || current.heat_index_c || current.temp_c)?.toFixed(1)}°C ·
+      Humidity ${current.humidity}%
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px;">
+      <div>
+        <p style="color: #6b7280; margin: 0; font-size: 14px;">Today's High</p>
+        <p style="font-size: 24px; font-weight: bold; margin: 4px 0; color: #111827;">
+          ${todayHigh?.toFixed(1)}°C
+        </p>
+      </div>
+      <div>
+        <p style="color: #6b7280; margin: 0; font-size: 14px;">Today's Low</p>
+        <p style="font-size: 24px; font-weight: bold; margin: 4px 0; color: #111827;">
+          ${todayLow?.toFixed(1)}°C
+        </p>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+      <p style="margin: 8px 0; color: #4b5563;">
+        <strong>Wind:</strong> ${current.wind_speed_kmh?.toFixed(1)} km/h
+        ${current.wind_gust_kmh ? ` (gusts to ${current.wind_gust_kmh.toFixed(1)} km/h)` : ''}
+      </p>
+      <p style="margin: 8px 0; color: #4b5563;">
+        <strong>Rain today:</strong> ${current.rain_day_mm?.toFixed(1)} mm
+      </p>
+      <p style="margin: 8px 0; color: #4b5563;">
+        <strong>Pressure:</strong> ${current.barometer_mmhg?.toFixed(0)} mmHg
+      </p>
+    </div>
+  </div>
+
+  <div style="background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+    <h2 style="font-size: 20px; margin: 0 0 16px 0; color: #92400e;">🦁 Louisina's Weather Report</h2>
+    <div style="white-space: pre-line; color: #78350f; line-height: 1.8;">
+${narrative}
+    </div>
+  </div>
+
+  <div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 14px; border-top: 1px solid #e5e7eb;">
+    <p style="margin: 0;">Cascina Leone Weather Station · Niella Belbo, Piedmont</p>
+    <p style="margin: 8px 0 0 0;">
+      <a href="https://leone-weather.vercel.app" style="color: #3b82f6; text-decoration: none;">View Full Dashboard</a>
+    </p>
+  </div>
+
+</body>
+</html>
+    `;
+
+    // Send email via Resend
+    const { data, error } = await resend.emails.send({
+      from: 'Louisina at Cascina Leone <weather@updates.cascinaleone.com>',
+      to: ['hedvig@maigre.com', 'ian@ian.io'],
+      subject: `${emoji} Your Daily Weather Report - Cascina Leone`,
+      html: emailHtml,
+    });
+
+    if (error) {
+      console.error('Error sending email:', error);
+      return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      emailId: data?.id,
+      message: 'Daily weather email sent successfully',
+    });
+  } catch (error) {
+    console.error('Error sending daily email:', error);
+    return NextResponse.json(
+      { error: 'Failed to send daily email' },
+      { status: 500 }
+    );
+  }
+}
