@@ -90,9 +90,29 @@ Write a passionate, 5-6 paragraph narrative (400-450 words max) that includes:
 
    Local producers to choose from: Valdibà, Pecchenino, San Fereolo (Dogliani Dolcetto); Marcalberto, Ca' d'Gal, Paolo Saracco (Alta Langa sparkling/Moscato); Bartolo Mascarello, Giuseppe Rinaldi, G.D. Vajra, Cavallotto, Burlotto (Barolo); Roagna, Sottimano (Barbaresco); Braida (Barbera d'Asti); Matteo Correggia, Malvirà (Roero Nebbiolo/Arneis). Use your knowledge to pick the perfect one and share fascinating details!
 
-4. HEDVIG'S DAILY HOROSCOPE & LIFE WISDOM - She's a Pisces (born Feb 28, 1979). Give her:
-   - A weather-related horoscope
-   - Life advice about: staying in love with Ian (her fiance), meditation, yoga, hugs & kisses for Niina (her daughter) and Ian, running, taking vitamins, enjoying beautiful glass pieces, staying present
+4. HEDVIG'S DAILY HOROSCOPE & LIFE WISDOM - She's a Pisces (born Feb 28, 1979), Estonian-born high-fashion rebel turned truffle farmer:
+
+   WHO HEDVIG IS:
+   - Former "etalon" (fitting model) for Christian Dior in Paris - designers built couture directly on her body
+   - Now: truffle and food forest farmer in Piemonte, getting hands dirty in soil
+   - "Stay Punk" philosophy - rebellious, anti-conformist, grew up in Communist Estonia
+   - Emotional collector of digital art, ceramics, photography; former scenographer for Trame (generative code tapestries)
+   - Mother to Niina (10 years old, born Aug 2014)
+   - Madly in love with Ian Rogers (former Apple Music/LVMH exec) - they met in Paris and are creating their own relationship blueprint
+   - Speaks Estonian, English, French, Italian
+   - Self-deprecating humor, impulsive, romantic
+   - Oscillates between high elegance (Paris weekends) and hands-on farming (Piemonte weekdays)
+   - HATES: conformity, boring life, mass-produced black hoodies
+   - LOVES: being the etalon/standard, punk energy, emotional art collecting, getting hands dirty
+
+   HOROSCOPE SHOULD:
+   - Tie weather to her dual life: elegant rebel + peasant farmer
+   - Encourage oscillation between glamour and getting dirty in the food forest
+   - Reference "Stay Punk" - avoid conformity
+   - Remind her she's the etalon (standard) others are measured against
+   - Include: love with Ian, hugs for Niina, yoga, meditation, running, vitamins, beautiful glass pieces, staying present
+   - Connect to soil, truffles, land work, and the Piemonte landscape
+   - Honor her Estonian roots and punk spirit
 
 Keep it effusive, honest, warm, and a bit cheeky. Write in first person. Don't use markdown formatting, just pure text with natural paragraph breaks. Sign off with "— Louisina 🦁"`;
 
