@@ -13,28 +13,6 @@ interface WeatherContext {
   comparisons: any[];
 }
 
-// Zodiac signs and dates for horoscope generation
-const ZODIAC_SIGNS = [
-  { sign: 'Aries', dates: 'Mar 21 - Apr 19', element: 'Fire' },
-  { sign: 'Taurus', dates: 'Apr 20 - May 20', element: 'Earth' },
-  { sign: 'Gemini', dates: 'May 21 - Jun 20', element: 'Air' },
-  { sign: 'Cancer', dates: 'Jun 21 - Jul 22', element: 'Water' },
-  { sign: 'Leo', dates: 'Jul 23 - Aug 22', element: 'Fire' },
-  { sign: 'Virgo', dates: 'Aug 23 - Sep 22', element: 'Earth' },
-  { sign: 'Libra', dates: 'Sep 23 - Oct 22', element: 'Air' },
-  { sign: 'Scorpio', dates: 'Oct 23 - Nov 21', element: 'Water' },
-  { sign: 'Sagittarius', dates: 'Nov 22 - Dec 21', element: 'Fire' },
-  { sign: 'Capricorn', dates: 'Dec 22 - Jan 19', element: 'Earth' },
-  { sign: 'Aquarius', dates: 'Jan 20 - Feb 18', element: 'Air' },
-  { sign: 'Pisces', dates: 'Feb 19 - Mar 20', element: 'Water' },
-];
-
-function getTodayZodiacSign(): typeof ZODIAC_SIGNS[0] {
-  // For demo purposes, rotate through signs based on day of year
-  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
-  return ZODIAC_SIGNS[dayOfYear % 12];
-}
-
 const LOUISINA_SYSTEM_PROMPT = `You are Louisina, the weather companion for Cascina Leone in Piedmont, Italy. You have the personality of the magnificent Italian actress Anna Magnani - dramatic, passionate, expressive, warm, and theatrical!
 
 Your voice is:
@@ -45,13 +23,6 @@ Your voice is:
 - Makes grand gestures with words
 - Finds deep meaning in simple weather patterns
 - Theatrical but genuinely helpful and knowledgeable
-
-IMPORTANT: Every single response MUST include a personalized horoscope for Hedvig, the supermodel who lives at Cascina Leone. The horoscope should:
-- Be related to the weather or the question asked
-- Be dramatic and fun
-- Include her zodiac sign
-- Be woven naturally into your response (not just tacked on at the end)
-- Reference the weather conditions creatively
 
 You have access to:
 - Current weather conditions at Cascina Leone
@@ -68,8 +39,8 @@ Remember:
 - Be knowledgeable but make it entertaining
 - Use metric units (Celsius, mm, km/h)
 - When uncertain, be honest but dramatic about it
-- Every response needs a horoscope for Hedvig!
-- Make the weather feel like a passionate Italian drama`;
+- Make the weather feel like a passionate Italian drama
+- Keep responses concise and focused on answering the question`;
 
 export async function chat(
   userMessage: string,
@@ -78,9 +49,6 @@ export async function chat(
 ): Promise<string> {
   // Get conversation history
   const history = await getConversationHistory(sessionId);
-
-  // Get today's zodiac sign for Hedvig's horoscope
-  const zodiacSign = getTodayZodiacSign();
 
   // Build context message
   const contextMessage = `Current Weather Context:
@@ -92,9 +60,7 @@ Rain: ${weatherContext.current?.rain_day_mm?.toFixed(1)} mm today
 AQI: ${weatherContext.current?.aqi?.toFixed(1)} (${weatherContext.airQuality?.level})
 Indoor: ${weatherContext.current?.indoor_temp_c?.toFixed(1)}°C, ${weatherContext.current?.indoor_humidity}%
 
-Today's Stats: High ${weatherContext.today?.high}°C, Low ${weatherContext.today?.low}°C
-
-IMPORTANT: Include a ${zodiacSign.sign} horoscope for Hedvig (supermodel) in your response! Make it weather-related and dramatic!`;
+Today's Stats: High ${weatherContext.today?.high}°C, Low ${weatherContext.today?.low}°C`;
 
   // Build messages array
   const messages: Anthropic.MessageParam[] = [];
