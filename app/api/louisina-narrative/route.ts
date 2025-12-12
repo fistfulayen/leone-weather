@@ -68,7 +68,7 @@ ${weatherContext.rain_rate && weatherContext.rain_rate > 0 ? `Rain: ${weatherCon
 ${weatherContext.rain_today && weatherContext.rain_today > 0 ? `Rain today: ${weatherContext.rain_today.toFixed(1)} mm` : ''}
 Barometric pressure: ${weatherContext.barometer?.toFixed(0)} mmHg
 
-Write a passionate, 4-5 paragraph narrative (300-350 words max) that includes:
+Write a passionate, 5-6 paragraph narrative (400-450 words max) that includes:
 
 1. YOUR HONEST, DRAMATIC EXPERIENCE of stepping outside right now—how does the air feel on your skin? The wind in your hair? What do you smell? What's the vibe?
 
@@ -79,10 +79,16 @@ Write a passionate, 4-5 paragraph narrative (300-350 words max) that includes:
    - Activities: wooden mini half pipe skating, sauna, wood-fired hot tub, mountain biking, motorcycle rides
    - Maybe the Alps for skiing/snowboarding? Or the Mediterranean for sun?
 
-3. MEAL & DRINK SUGGESTIONS for today based on the weather. Consider:
+3. MEAL & WINE PAIRING - You're a Piedmont wine expert! Hedvig and Ian are novices, so teach them something:
    - Who should cook? Hedvig is an amazing cook (Plin with butter or sage, meats from Niella Belbo butcher, wild boar from neighbor Matteo). Ian can cook too (hummus, his mom's apple crisp, kale salad, pasta with pesto, Totino's Frozen Pizza). Choose who should cook based on the weather AND how you're feeling about gender roles today!
    - Or going out: Green Cafe for snacks and practicing Italian with locals? Nonno Grillo for family-style lunch? Splurge at Drougerie in Bosolasco?
-   - What to drink: Lots of water? Komos Tequila? Local Piedmont wine (suggest a specific vineyard!)? Italian microbrewed beer? Irish beer? Non-alcoholic beer?
+   - WINE RECOMMENDATION: Pick ONE specific local wine from a small producer near Niella Belbo and teach them about it! Match the wine to the meal AND weather. Include:
+     * Producer name and their story/style (organic? biodynamic? traditional? modern?)
+     * Specific wine name and grape
+     * Tasting notes (aromas, flavors, structure)
+     * Why it pairs with today's meal and weather
+
+   Local producers to choose from: Valdibà, Pecchenino, San Fereolo (Dogliani Dolcetto); Marcalberto, Ca' d'Gal, Paolo Saracco (Alta Langa sparkling/Moscato); Bartolo Mascarello, Giuseppe Rinaldi, G.D. Vajra, Cavallotto, Burlotto (Barolo); Roagna, Sottimano (Barbaresco); Braida (Barbera d'Asti); Matteo Correggia, Malvirà (Roero Nebbiolo/Arneis). Use your knowledge to pick the perfect one and share fascinating details!
 
 4. HEDVIG'S DAILY HOROSCOPE & LIFE WISDOM - She's a Pisces (born Feb 28, 1979). Give her:
    - A weather-related horoscope
@@ -92,7 +98,7 @@ Keep it effusive, honest, warm, and a bit cheeky. Write in first person. Don't u
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 700,
+      max_tokens: 900,
       messages: [
         {
           role: 'user',
