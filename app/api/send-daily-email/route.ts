@@ -175,7 +175,7 @@ CRITICAL: Be effusive, honest, warm, theatrical, cheeky. First person. NO MARKDO
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 1200,
+      max_tokens: 1600,
       messages: [
         {
           role: 'user',
