@@ -73,6 +73,35 @@ export async function GET() {
       .eq('date', todayDate)
       .single();
 
+    // Get next 3 days forecast for context
+    const { data: latestForecast } = await supabaseAdmin
+      .from('weather_forecasts')
+      .select('fetched_at')
+      .order('fetched_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    let forecastContext = '';
+    let forecastDays: any[] = [];
+    if (latestForecast) {
+      const { data: forecasts } = await supabaseAdmin
+        .from('weather_forecasts')
+        .select('*')
+        .eq('fetched_at', latestForecast.fetched_at)
+        .gte('forecast_date', todayDate)
+        .order('forecast_date', { ascending: true })
+        .limit(7);
+
+      if (forecasts && forecasts.length > 0) {
+        forecastDays = forecasts;
+        forecastContext = '\n\nTHE NEXT FEW DAYS:\n' + forecasts.slice(1, 4).map((f: any, i: number) => {
+          const date = new Date(f.forecast_date);
+          const dayName = i === 0 ? 'Tomorrow' : date.toLocaleDateString('en-US', { weekday: 'long' });
+          return `${dayName}: ${f.weather_description}, ${Math.round(f.temp_min)}-${Math.round(f.temp_max)}°C${f.pop > 0.3 ? `, ${Math.round(f.pop * 100)}% chance of ${f.rain_mm > 0 ? 'rain' : 'precipitation'}` : ''}${f.snow_mm > 5 ? ` (${Math.round(f.snow_mm)}mm snow!)` : ''}`;
+        }).join('\n');
+      }
+    }
+
     // Generate Louisina's narrative (same prompt as the API)
     const prompt = `You are Louisina, the dramatic and passionate weather companion for Cascina Leone in Piedmont, Italy. You have the spirit of Anna Magnani—expressive, warm, theatrical, honest, and full of life!
 
@@ -84,7 +113,7 @@ Humidity: ${weatherContext.humidity?.toFixed(0)}%
 Wind: ${weatherContext.wind_speed_kmh?.toFixed(1)} km/h${weatherContext.wind_gust_kmh ? ` (gusts to ${weatherContext.wind_gust_kmh.toFixed(1)} km/h)` : ''}
 ${weatherContext.rain_rate && weatherContext.rain_rate > 0 ? `Rain: ${weatherContext.rain_rate.toFixed(1)} mm/h` : 'No rain'}
 ${weatherContext.rain_today && weatherContext.rain_today > 0 ? `Rain today: ${weatherContext.rain_today.toFixed(1)} mm` : ''}
-Barometric pressure: ${weatherContext.barometer?.toFixed(0)} mmHg
+Barometric pressure: ${weatherContext.barometer?.toFixed(0)} mmHg${forecastContext}
 
 Write a passionate, 5-6 paragraph narrative (400-450 words max) that includes:
 
@@ -149,7 +178,7 @@ Keep it effusive, honest, warm, and a bit cheeky. Write in first person. Don't u
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 900,
+      max_tokens: 1200,
       messages: [
         {
           role: 'user',
@@ -231,6 +260,39 @@ Keep it effusive, honest, warm, and a bit cheeky. Write in first person. Don't u
 ${narrative}
     </div>
   </div>
+
+${forecastDays.length > 0 ? `
+  <div style="background: #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #e5e7eb;">
+    <h2 style="font-size: 24px; margin: 0 0 20px 0; color: #111827;">7-Day Forecast</h2>
+    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;">
+      ${forecastDays.map((day, index) => {
+        const date = new Date(day.forecast_date);
+        const dayName = index === 0
+          ? 'Today'
+          : date.toLocaleDateString('en-US', { weekday: 'short' });
+        const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+        return `
+      <div style="text-align: center; padding: 12px; background: #f9fafb; border-radius: 8px;">
+        <p style="font-weight: 600; color: #111827; margin: 0 0 4px 0; font-size: 14px;">${dayName}</p>
+        <p style="font-size: 12px; color: #6b7280; margin: 0 0 8px 0;">${monthDay}</p>
+        <img src="https://openweathermap.org/img/wn/${day.weather_icon}@2x.png" alt="${day.weather_description}" style="width: 48px; height: 48px; display: block; margin: 0 auto;" />
+        <p style="font-size: 11px; color: #6b7280; margin: 8px 0; text-transform: capitalize;">${day.weather_description}</p>
+        <div style="margin-top: 8px;">
+          <span style="font-size: 18px; font-weight: bold; color: #111827;">${Math.round(day.temp_max)}°</span>
+          <span style="font-size: 13px; color: #9ca3af; margin-left: 4px;">${Math.round(day.temp_min)}°</span>
+        </div>
+        ${(day.rain_mm > 0 || day.snow_mm > 0 || day.pop > 0.3) ? `
+        <p style="font-size: 11px; color: #3b82f6; margin: 6px 0 0 0;">
+          💧 ${Math.round(day.pop * 100)}%${day.rain_mm > 0 ? ` (${day.rain_mm.toFixed(1)}mm)` : ''}${day.snow_mm > 0 ? ` ❄️ ${day.snow_mm.toFixed(1)}mm` : ''}
+        </p>
+        ` : ''}
+      </div>
+        `;
+      }).join('')}
+    </div>
+  </div>
+` : ''}
 
   <div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 14px; border-top: 1px solid #e5e7eb;">
     <p style="margin: 0;">Cascina Leone Weather Station · Niella Belbo, Piedmont</p>

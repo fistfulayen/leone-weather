@@ -66,6 +66,33 @@ export async function GET() {
       .eq('date', todayDate)
       .single();
 
+    // Get next 3 days forecast for context
+    const { data: latestForecast } = await supabaseAdmin
+      .from('weather_forecasts')
+      .select('fetched_at')
+      .order('fetched_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    let forecastContext = '';
+    if (latestForecast) {
+      const { data: forecasts } = await supabaseAdmin
+        .from('weather_forecasts')
+        .select('*')
+        .eq('fetched_at', latestForecast.fetched_at)
+        .gte('forecast_date', todayDate)
+        .order('forecast_date', { ascending: true })
+        .limit(3);
+
+      if (forecasts && forecasts.length > 0) {
+        forecastContext = '\n\nTHE NEXT FEW DAYS:\n' + forecasts.slice(1).map((f: any, i: number) => {
+          const date = new Date(f.forecast_date);
+          const dayName = i === 0 ? 'Tomorrow' : date.toLocaleDateString('en-US', { weekday: 'long' });
+          return `${dayName}: ${f.weather_description}, ${Math.round(f.temp_min)}-${Math.round(f.temp_max)}°C${f.pop > 0.3 ? `, ${Math.round(f.pop * 100)}% chance of ${f.rain_mm > 0 ? 'rain' : 'precipitation'}` : ''}${f.snow_mm > 5 ? ` (${Math.round(f.snow_mm)}mm snow!)` : ''}`;
+        }).join('\n');
+      }
+    }
+
     const prompt = `You are Louisina, the dramatic and passionate weather companion for Cascina Leone in Piedmont, Italy. You have the spirit of Anna Magnani—expressive, warm, theatrical, honest, and full of life!
 
 I've just sent you outside RIGHT NOW to experience the current weather conditions. It is currently ${timeOfDay} in Piedmont (${hour}:00). Here's what you're feeling at this very moment:
@@ -76,7 +103,7 @@ Humidity: ${weatherContext.humidity?.toFixed(0)}%
 Wind: ${weatherContext.wind_speed_kmh?.toFixed(1)} km/h${weatherContext.wind_gust_kmh ? ` (gusts to ${weatherContext.wind_gust_kmh.toFixed(1)} km/h)` : ''}
 ${weatherContext.rain_rate && weatherContext.rain_rate > 0 ? `Rain: ${weatherContext.rain_rate.toFixed(1)} mm/h` : 'No rain'}
 ${weatherContext.rain_today && weatherContext.rain_today > 0 ? `Rain today: ${weatherContext.rain_today.toFixed(1)} mm` : ''}
-Barometric pressure: ${weatherContext.barometer?.toFixed(0)} mmHg
+Barometric pressure: ${weatherContext.barometer?.toFixed(0)} mmHg${forecastContext}
 
 Write a passionate, 5-6 paragraph narrative (400-450 words max) that includes:
 
@@ -141,7 +168,7 @@ Keep it effusive, honest, warm, and a bit cheeky. Write in first person. Don't u
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 900,
+      max_tokens: 1200,
       messages: [
         {
           role: 'user',
