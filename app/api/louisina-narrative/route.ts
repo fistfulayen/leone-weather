@@ -66,6 +66,17 @@ export async function GET() {
       .eq('date', todayDate)
       .single();
 
+    // Get weather overview for additional context
+    const { data: latestOverview } = await supabaseAdmin
+      .from('weather_overviews')
+      .select('overview_text')
+      .eq('overview_date', todayDate)
+      .order('fetched_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    const weatherOverview = latestOverview?.overview_text || '';
+
     // Get next 3 days forecast for context
     const { data: latestForecast } = await supabaseAdmin
       .from('weather_forecasts')
@@ -103,7 +114,7 @@ Humidity: ${weatherContext.humidity?.toFixed(0)}%
 Wind: ${weatherContext.wind_speed_kmh?.toFixed(1)} km/h${weatherContext.wind_gust_kmh ? ` (gusts to ${weatherContext.wind_gust_kmh.toFixed(1)} km/h)` : ''}
 ${weatherContext.rain_rate && weatherContext.rain_rate > 0 ? `Rain: ${weatherContext.rain_rate.toFixed(1)} mm/h` : 'No rain'}
 ${weatherContext.rain_today && weatherContext.rain_today > 0 ? `Rain today: ${weatherContext.rain_today.toFixed(1)} mm` : ''}
-Barometric pressure: ${weatherContext.barometer?.toFixed(0)} mmHg${forecastContext}
+Barometric pressure: ${weatherContext.barometer?.toFixed(0)} mmHg${forecastContext}${weatherOverview ? `\n\nWEATHER SUMMARY:\n${weatherOverview}` : ''}
 
 Write a passionate, 5-6 paragraph narrative (400-450 words max) that includes:
 

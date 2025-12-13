@@ -129,6 +129,15 @@ CREATE TABLE IF NOT EXISTS weather_forecasts (
   UNIQUE(forecast_date, fetched_at)
 );
 
+-- Weather overviews (human-readable weather summaries from OpenWeatherMap)
+CREATE TABLE IF NOT EXISTS weather_overviews (
+  id BIGSERIAL PRIMARY KEY,
+  overview_date DATE NOT NULL,
+  overview_text TEXT NOT NULL,
+  fetched_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(overview_date, fetched_at)
+);
+
 -- Enable Row Level Security (optional, for future multi-user support)
 ALTER TABLE readings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE daily_summaries ENABLE ROW LEVEL SECURITY;
@@ -137,6 +146,7 @@ ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE aqi_comparisons ENABLE ROW LEVEL SECURITY;
 ALTER TABLE daily_horoscopes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE weather_forecasts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE weather_overviews ENABLE ROW LEVEL SECURITY;
 
 -- Create policies that allow all operations (since this is a personal app)
 CREATE POLICY "Enable all for readings" ON readings FOR ALL USING (true) WITH CHECK (true);
@@ -146,3 +156,4 @@ CREATE POLICY "Enable all for conversations" ON conversations FOR ALL USING (tru
 CREATE POLICY "Enable all for aqi_comparisons" ON aqi_comparisons FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Enable all for daily_horoscopes" ON daily_horoscopes FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Enable all for weather_forecasts" ON weather_forecasts FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable all for weather_overviews" ON weather_overviews FOR ALL USING (true) WITH CHECK (true);

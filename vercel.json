@@ -13,6 +13,10 @@
       "schedule": "30 5,11,17,23 * * *"
     },
     {
+      "path": "/api/fetch-weather-overview",
+      "schedule": "30 5,11,17,23 * * *"
+    },
+    {
       "path": "/api/fetch-horoscope",
       "schedule": "0 4 * * *"
     },
