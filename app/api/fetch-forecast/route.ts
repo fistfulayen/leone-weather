@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 
-// Niella Belbo coordinates
-const LAT = 44.436;
-const LON = 8.037;
+// Cascina Leone coordinates (Niella Belbo, Piedmont, Italy)
+const LAT = 44.5667;
+const LON = 8.0167;
 
 export async function GET() {
   try {
