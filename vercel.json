@@ -9,6 +9,10 @@
       "schedule": "0 1 * * *"
     },
     {
+      "path": "/api/fetch-forecast",
+      "schedule": "0 3 * * *"
+    },
+    {
       "path": "/api/fetch-horoscope",
       "schedule": "0 4 * * *"
     },

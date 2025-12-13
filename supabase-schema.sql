@@ -104,6 +104,31 @@ CREATE TABLE IF NOT EXISTS daily_horoscopes (
   fetched_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Weather forecasts (7-day forecast from OpenWeatherMap)
+CREATE TABLE IF NOT EXISTS weather_forecasts (
+  id BIGSERIAL PRIMARY KEY,
+  forecast_date DATE NOT NULL,
+  temp_min REAL,
+  temp_max REAL,
+  feels_like_day REAL,
+  feels_like_night REAL,
+  pressure REAL,
+  humidity REAL,
+  weather_main TEXT,
+  weather_description TEXT,
+  weather_icon TEXT,
+  clouds REAL,
+  wind_speed REAL,
+  wind_deg REAL,
+  rain_mm REAL,
+  snow_mm REAL,
+  pop REAL, -- probability of precipitation
+  sunrise TIMESTAMPTZ,
+  sunset TIMESTAMPTZ,
+  fetched_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(forecast_date, fetched_at)
+);
+
 -- Enable Row Level Security (optional, for future multi-user support)
 ALTER TABLE readings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE daily_summaries ENABLE ROW LEVEL SECURITY;
@@ -111,6 +136,7 @@ ALTER TABLE seasonal_baselines ENABLE ROW LEVEL SECURITY;
 ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE aqi_comparisons ENABLE ROW LEVEL SECURITY;
 ALTER TABLE daily_horoscopes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE weather_forecasts ENABLE ROW LEVEL SECURITY;
 
 -- Create policies that allow all operations (since this is a personal app)
 CREATE POLICY "Enable all for readings" ON readings FOR ALL USING (true) WITH CHECK (true);
@@ -119,3 +145,4 @@ CREATE POLICY "Enable all for seasonal_baselines" ON seasonal_baselines FOR ALL 
 CREATE POLICY "Enable all for conversations" ON conversations FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Enable all for aqi_comparisons" ON aqi_comparisons FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Enable all for daily_horoscopes" ON daily_horoscopes FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable all for weather_forecasts" ON weather_forecasts FOR ALL USING (true) WITH CHECK (true);

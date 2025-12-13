@@ -6,6 +6,7 @@ import AirQualityCard from '@/components/AirQualityCard';
 import TodaySummary from '@/components/TodaySummary';
 import ChatInterface from '@/components/ChatInterface';
 import LeoneNarrative from '@/components/LeoneNarrative';
+import ForecastCard from '@/components/ForecastCard';
 import { getHeaderEmoji } from '@/lib/weather-emoji';
 
 export default function Home() {
@@ -98,8 +99,13 @@ export default function Home() {
           </div>
         </div>
 
+        {/* 7-Day Forecast - Full Width */}
+        <ForecastCard />
+
         {/* Chat Interface - Full Width */}
-        <ChatInterface sessionId={sessionId} />
+        <div className="mt-6">
+          <ChatInterface sessionId={sessionId} />
+        </div>
 
         {/* Footer */}
         <footer className="mt-8 text-center text-xs text-gray-500">
