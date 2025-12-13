@@ -15,8 +15,8 @@ export async function GET() {
       );
     }
 
-    // Fetch 7-day forecast from OpenWeatherMap One Call API 2.5 (free tier)
-    const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${LAT}&lon=${LON}&exclude=minutely,hourly,alerts&units=metric&appid=${apiKey}`;
+    // Fetch 5-day forecast from OpenWeatherMap (free tier)
+    const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${LAT}&lon=${LON}&units=metric&appid=${apiKey}`;
 
     const response = await fetch(url);
     if (!response.ok) {
@@ -25,27 +25,43 @@ export async function GET() {
 
     const data = await response.json();
 
-    // Store each day's forecast in the database
-    const forecasts = data.daily.map((day: any) => ({
-      forecast_date: new Date(day.dt * 1000).toISOString().split('T')[0],
-      temp_min: day.temp.min,
-      temp_max: day.temp.max,
-      feels_like_day: day.feels_like.day,
-      feels_like_night: day.feels_like.night,
-      pressure: day.pressure,
-      humidity: day.humidity,
-      weather_main: day.weather[0]?.main,
-      weather_description: day.weather[0]?.description,
-      weather_icon: day.weather[0]?.icon,
-      clouds: day.clouds,
-      wind_speed: day.wind_speed,
-      wind_deg: day.wind_deg,
-      rain_mm: day.rain || 0,
-      snow_mm: day.snow || 0,
-      pop: day.pop, // probability of precipitation
-      sunrise: new Date(day.sunrise * 1000).toISOString(),
-      sunset: new Date(day.sunset * 1000).toISOString(),
-    }));
+    // Process 3-hour forecast data into daily forecasts
+    const dailyData: { [key: string]: any[] } = {};
+
+    data.list.forEach((item: any) => {
+      const date = new Date(item.dt * 1000).toISOString().split('T')[0];
+      if (!dailyData[date]) {
+        dailyData[date] = [];
+      }
+      dailyData[date].push(item);
+    });
+
+    // Aggregate daily data
+    const forecasts = Object.entries(dailyData).map(([date, items]) => {
+      const temps = items.map((i: any) => i.main.temp);
+      const pops = items.map((i: any) => i.pop || 0);
+
+      return {
+        forecast_date: date,
+        temp_min: Math.min(...temps),
+        temp_max: Math.max(...temps),
+        feels_like_day: items[Math.floor(items.length / 2)]?.main.feels_like || temps[0],
+        feels_like_night: items[items.length - 1]?.main.feels_like || temps[0],
+        pressure: items[0].main.pressure,
+        humidity: Math.round(items.reduce((sum: number, i: any) => sum + i.main.humidity, 0) / items.length),
+        weather_main: items[Math.floor(items.length / 2)]?.weather[0]?.main,
+        weather_description: items[Math.floor(items.length / 2)]?.weather[0]?.description,
+        weather_icon: items[Math.floor(items.length / 2)]?.weather[0]?.icon,
+        clouds: Math.round(items.reduce((sum: number, i: any) => sum + i.clouds.all, 0) / items.length),
+        wind_speed: items.reduce((sum: number, i: any) => sum + i.wind.speed, 0) / items.length,
+        wind_deg: items[0].wind.deg,
+        rain_mm: items.reduce((sum: number, i: any) => sum + (i.rain?.['3h'] || 0), 0),
+        snow_mm: items.reduce((sum: number, i: any) => sum + (i.snow?.['3h'] || 0), 0),
+        pop: Math.max(...pops),
+        sunrise: null,
+        sunset: null,
+      };
+    });
 
     // Insert forecasts into database
     const { data: stored, error } = await supabaseAdmin
