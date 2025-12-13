@@ -63,6 +63,16 @@ export async function GET() {
       today_low: todayLow,
     };
 
+    // Get today's horoscope for context
+    const todayDate = new Date().toLocaleDateString('en-CA', {
+      timeZone: 'Europe/Rome',
+    });
+    const { data: horoscope } = await supabaseAdmin
+      .from('daily_horoscopes')
+      .select('*')
+      .eq('date', todayDate)
+      .single();
+
     // Generate Louisina's narrative (same prompt as the API)
     const prompt = `You are Louisina, the dramatic and passionate weather companion for Cascina Leone in Piedmont, Italy. You have the spirit of Anna Magnani—expressive, warm, theatrical, honest, and full of life!
 
@@ -121,6 +131,19 @@ Write a passionate, 5-6 paragraph narrative (400-450 words max) that includes:
    - Include: love with Ian, hugs for Niina, yoga, meditation, running, vitamins, beautiful glass pieces, staying present
    - Connect to soil, truffles, land work, and the Piemonte landscape
    - Honor her Estonian roots and punk spirit
+${
+  horoscope
+    ? `
+
+   TODAY'S ASTROLOGICAL CONTEXT (Virgo-Pisces Love Horoscope):
+   Use this as inspiration and context for Hedvig's horoscope (Ian is Virgo, Hedvig is Pisces):
+   ${horoscope.horoscope_text}
+   Lucky colors: ${horoscope.lucky_colors}
+   Lucky numbers: ${horoscope.lucky_numbers}
+
+   Weave these themes into your personal horoscope for Hedvig, connecting them to weather, her life at Cascina Leone, and her relationship with Ian.`
+    : ''
+}
 
 Keep it effusive, honest, warm, and a bit cheeky. Write in first person. Don't use markdown formatting, just pure text with natural paragraph breaks. Sign off with "— Louisina 🦁"`;
 

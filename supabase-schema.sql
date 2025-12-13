@@ -95,12 +95,22 @@ CREATE TABLE IF NOT EXISTS aqi_comparisons (
 -- Index for fast city lookups
 CREATE INDEX IF NOT EXISTS idx_aqi_city ON aqi_comparisons(city, fetched_at DESC);
 
+-- Daily horoscopes (Virgo-Pisces love horoscope for context)
+CREATE TABLE IF NOT EXISTS daily_horoscopes (
+  date DATE PRIMARY KEY,
+  horoscope_text TEXT NOT NULL,
+  lucky_colors TEXT,
+  lucky_numbers TEXT,
+  fetched_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Enable Row Level Security (optional, for future multi-user support)
 ALTER TABLE readings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE daily_summaries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE seasonal_baselines ENABLE ROW LEVEL SECURITY;
 ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE aqi_comparisons ENABLE ROW LEVEL SECURITY;
+ALTER TABLE daily_horoscopes ENABLE ROW LEVEL SECURITY;
 
 -- Create policies that allow all operations (since this is a personal app)
 CREATE POLICY "Enable all for readings" ON readings FOR ALL USING (true) WITH CHECK (true);
@@ -108,3 +118,4 @@ CREATE POLICY "Enable all for daily_summaries" ON daily_summaries FOR ALL USING 
 CREATE POLICY "Enable all for seasonal_baselines" ON seasonal_baselines FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Enable all for conversations" ON conversations FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Enable all for aqi_comparisons" ON aqi_comparisons FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable all for daily_horoscopes" ON daily_horoscopes FOR ALL USING (true) WITH CHECK (true);
