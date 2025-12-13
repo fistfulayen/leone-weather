@@ -155,6 +155,19 @@ export function getAQILevel(aqi: number): {
   }
 }
 
+function getCountryFlag(country: string): string {
+  const flags: Record<string, string> = {
+    'Italy': '🇮🇹',
+    'France': '🇫🇷',
+    'USA': '🇺🇸',
+    'China': '🇨🇳',
+    'UK': '🇬🇧',
+    'Spain': '🇪🇸',
+    'Germany': '🇩🇪',
+  };
+  return flags[country] || '';
+}
+
 export function generateAQIStory(currentAQI: number, comparisons: CityAQI[]): string {
   const level = getAQILevel(currentAQI);
   const sorted = [...comparisons].sort((a, b) => a.aqi - b.aqi);
@@ -184,7 +197,8 @@ export function generateAQIStory(currentAQI: number, comparisons: CityAQI[]): st
     keyComparisons.forEach(c => {
       if (c) {
         const cityLevel = getAQILevel(c.aqi);
-        story += `• ${c.city}: AQI ${c.aqi} (${cityLevel.level})\n`;
+        const flag = getCountryFlag(c.country);
+        story += `• ${flag} ${c.city}: AQI ${c.aqi} (${cityLevel.level})\n`;
       }
     });
   }

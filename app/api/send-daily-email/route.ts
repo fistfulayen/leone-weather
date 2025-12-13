@@ -335,18 +335,18 @@ CRITICAL: Be effusive, honest, warm, theatrical, cheeky. First person. NO MARKDO
 
     <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
       <p style="margin: 8px 0; color: #4b5563;">
-        <strong>Wind:</strong> ${current.wind_speed_kmh?.toFixed(1)} km/h
+        <strong>🌬️ Wind:</strong> ${current.wind_speed_kmh?.toFixed(1)} km/h
         ${current.wind_gust_kmh ? ` (gusts to ${current.wind_gust_kmh.toFixed(1)} km/h)` : ''}
       </p>
       <p style="margin: 8px 0; color: #4b5563;">
-        <strong>Rain today:</strong> ${current.rain_day_mm?.toFixed(1)} mm
+        <strong>💧 Rain today:</strong> ${current.rain_day_mm?.toFixed(1)} mm
       </p>
       <p style="margin: 8px 0; color: #4b5563;">
-        <strong>Pressure:</strong> ${current.barometer_mmhg?.toFixed(0)} mmHg
+        <strong>💪 Pressure:</strong> ${current.barometer_mmhg?.toFixed(0)} mmHg
       </p>
       <p style="margin: 8px 0; color: #4b5563;">
-        <strong>Sunrise:</strong> ${sunTimes.sunrise.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' })} ·
-        <strong>Sunset:</strong> ${sunTimes.sunset.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' })}
+        <strong>🌅 Sunrise:</strong> ${sunTimes.sunrise.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' })} ·
+        <strong>🌇 Sunset:</strong> ${sunTimes.sunset.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' })}
       </p>
     </div>
   </div>
