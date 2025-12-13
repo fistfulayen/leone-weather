@@ -57,10 +57,6 @@ export default function CryptoPunksCard() {
               src={sale.imageUrl}
               alt={`Punk ${sale.punkId}`}
               className="w-24 h-24 rounded pixelated"
-              style={{
-                imageRendering: 'pixelated',
-                WebkitImageRendering: '-webkit-crisp-edges',
-              }}
             />
             <div className="flex-1">
               <p className="text-lg font-semibold text-gray-900">
