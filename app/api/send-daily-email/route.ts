@@ -4,6 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { anthropic } from '@/lib/claude';
 import { getHeaderEmoji } from '@/lib/weather-emoji';
 import { getSunTimes } from '@/lib/sun-times';
+import { getRecentAQIComparisons, getAQILevel, generateAQIStory, getAQIHealthGuidance, calculateNowCastAQI } from '@/lib/air-quality';
 
 export async function GET() {
   try {
@@ -116,6 +117,101 @@ export async function GET() {
     // Get day of week
     const dayOfWeek = italyTime.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'Europe/Rome' });
     const isWeekend = dayOfWeek === 'Saturday' || dayOfWeek === 'Sunday';
+
+    // Get air quality data
+    let airQualityData = null;
+    try {
+      const { data: aqiReadings } = await supabaseAdmin
+        .from('readings')
+        .select('aqi, pm25_ugm3, pm10_ugm3, timestamp')
+        .order('timestamp', { ascending: false })
+        .limit(1);
+
+      if (aqiReadings && aqiReadings[0] && aqiReadings[0].aqi !== null) {
+        const aqiCurrent = aqiReadings[0];
+
+        // Get last 12 hours for NowCast
+        const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
+        const { data: historicalReadings } = await supabaseAdmin
+          .from('readings')
+          .select('aqi, timestamp')
+          .gte('timestamp', twelveHoursAgo)
+          .order('timestamp', { ascending: false });
+
+        const hourlyAQI = historicalReadings
+          ?.filter(r => r.aqi !== null)
+          .map(r => r.aqi) || [];
+        const nowcastAQI = calculateNowCastAQI(hourlyAQI);
+
+        const comparisons = await getRecentAQIComparisons();
+        const displayAQI = nowcastAQI ?? aqiCurrent.aqi;
+        const level = getAQILevel(displayAQI);
+        const story = generateAQIStory(displayAQI, comparisons);
+        const healthGuidance = getAQIHealthGuidance(displayAQI);
+
+        airQualityData = {
+          aqi: aqiCurrent.aqi,
+          nowcastAQI,
+          pm25: aqiCurrent.pm25_ugm3,
+          pm10: aqiCurrent.pm10_ugm3,
+          level: level.level,
+          color: level.color,
+          story,
+          healthGuidance,
+        };
+      }
+    } catch (error) {
+      console.error('Error fetching air quality for email:', error);
+    }
+
+    // Get cron status data
+    let cronStatus = null;
+    try {
+      const { data: latestReading } = await supabaseAdmin
+        .from('readings')
+        .select('timestamp')
+        .order('timestamp', { ascending: false })
+        .limit(1)
+        .single();
+
+      const { data: latestForecastStatus } = await supabaseAdmin
+        .from('weather_forecasts')
+        .select('fetched_at')
+        .order('fetched_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      const { data: latestOverviewStatus } = await supabaseAdmin
+        .from('weather_overviews')
+        .select('fetched_at')
+        .order('fetched_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      const { data: latestHoroscopeStatus } = await supabaseAdmin
+        .from('daily_horoscopes')
+        .select('fetched_at')
+        .order('fetched_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      const { data: latestAQIStatus } = await supabaseAdmin
+        .from('aqi_comparisons')
+        .select('fetched_at')
+        .order('fetched_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      cronStatus = {
+        weatherlink: latestReading?.timestamp,
+        forecast: latestForecastStatus?.fetched_at,
+        overview: latestOverviewStatus?.fetched_at,
+        horoscope: latestHoroscopeStatus?.fetched_at,
+        aqi: latestAQIStatus?.fetched_at,
+      };
+    } catch (error) {
+      console.error('Error fetching cron status for email:', error);
+    }
 
     // Generate Louisina's narrative (same prompt as the API)
     const prompt = `You are Louisina, the dramatic and passionate weather companion for Cascina Leone in Piedmont, Italy. You have the spirit of Anna Magnani—expressive, warm, theatrical, honest, and full of life!
@@ -251,6 +347,49 @@ CRITICAL: Be effusive, honest, warm, theatrical, cheeky. First person. NO MARKDO
     </div>
   </div>
 
+  ${airQualityData ? `
+  <div style="background: #f0fdf4; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #86efac;">
+    <h2 style="font-size: 24px; margin: 0 0 16px 0; color: #111827;">AIR QUALITY</h2>
+
+    <div style="margin-bottom: 16px;">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background-color: ${airQualityData.color};"></span>
+        <span style="font-size: 20px; font-weight: bold; color: #111827;">${airQualityData.level}</span>
+      </div>
+
+      ${airQualityData.nowcastAQI !== null && airQualityData.nowcastAQI !== undefined ? `
+      <div style="margin-bottom: 8px;">
+        <span style="font-size: 14px; color: #374151; font-weight: 500;">NowCast AQI: </span>
+        <span style="font-size: 18px; font-weight: bold; color: #111827;">${airQualityData.nowcastAQI.toFixed(1)}</span>
+      </div>
+      ` : ''}
+
+      <div style="margin-bottom: 8px;">
+        <span style="font-size: 14px; color: #374151; font-weight: 500;">Current AQI: </span>
+        <span style="font-size: 18px; font-weight: bold; color: #111827;">${airQualityData.aqi.toFixed(1)}</span>
+      </div>
+
+      <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">
+        Davis AirLink sensor · EU EEA European index
+      </div>
+    </div>
+
+    <div style="font-size: 14px; color: #374151; line-height: 1.6; margin-bottom: 16px; white-space: pre-line;">
+${airQualityData.story}
+    </div>
+
+    ${airQualityData.pm25 !== undefined && airQualityData.pm10 !== undefined ? `
+    <div style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">
+      PM2.5: ${airQualityData.pm25.toFixed(1)} µg/m³ · PM10: ${airQualityData.pm10.toFixed(1)} µg/m³
+    </div>
+    ` : ''}
+
+    <div style="font-size: 14px; color: #4b5563; font-style: italic; border-top: 1px solid #d1fae5; padding-top: 12px;">
+      ${airQualityData.healthGuidance}
+    </div>
+  </div>
+  ` : ''}
+
   <div style="background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
     <h2 style="font-size: 20px; margin: 0 0 16px 0; color: #92400e;">🦁 Louisina's Weather Report</h2>
     <div style="white-space: pre-line; color: #78350f; line-height: 1.8;">
@@ -261,7 +400,7 @@ ${narrative}
 ${forecastDays.length > 0 ? `
   <div style="background: #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #e5e7eb;">
     <h2 style="font-size: 24px; margin: 0 0 20px 0; color: #111827;">7-Day Forecast</h2>
-    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;">
+    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px;">
       ${forecastDays.map((day, index) => {
         const date = new Date(day.forecast_date);
         const dayName = index === 0
@@ -270,18 +409,18 @@ ${forecastDays.length > 0 ? `
         const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
         return `
-      <div style="text-align: center; padding: 12px; background: #f9fafb; border-radius: 8px;">
-        <p style="font-weight: 600; color: #111827; margin: 0 0 4px 0; font-size: 14px;">${dayName}</p>
-        <p style="font-size: 12px; color: #6b7280; margin: 0 0 8px 0;">${monthDay}</p>
+      <div style="text-align: center; padding: 16px 12px; background: #f9fafb; border-radius: 8px; border: 2px solid #e5e7eb;">
+        <p style="font-weight: 700; color: #111827; margin: 0 0 2px 0; font-size: 14px;">${dayName}</p>
+        <p style="font-size: 11px; color: #6b7280; margin: 0 0 12px 0; padding-bottom: 8px; border-bottom: 1px solid #e5e7eb;">${monthDay}</p>
         <img src="https://openweathermap.org/img/wn/${day.weather_icon}@2x.png" alt="${day.weather_description}" style="width: 48px; height: 48px; display: block; margin: 0 auto;" />
-        <p style="font-size: 11px; color: #6b7280; margin: 8px 0; text-transform: capitalize;">${day.weather_description}</p>
-        <div style="margin-top: 8px;">
-          <span style="font-size: 18px; font-weight: bold; color: #111827;">${Math.round(day.temp_max)}°</span>
-          <span style="font-size: 13px; color: #9ca3af; margin-left: 4px;">${Math.round(day.temp_min)}°</span>
+        <p style="font-size: 10px; color: #6b7280; margin: 8px 0 12px 0; text-transform: capitalize; min-height: 28px; line-height: 14px;">${day.weather_description}</p>
+        <div style="margin: 12px 0; padding: 8px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;">
+          <span style="font-size: 20px; font-weight: bold; color: #111827;">${Math.round(day.temp_max)}°</span>
+          <span style="font-size: 14px; color: #9ca3af; margin-left: 6px;">${Math.round(day.temp_min)}°</span>
         </div>
         ${(day.rain_mm > 0 || day.snow_mm > 0 || day.pop > 0.3) ? `
-        <p style="font-size: 11px; color: #3b82f6; margin: 6px 0 0 0;">
-          💧 ${Math.round(day.pop * 100)}%${day.rain_mm > 0 ? ` (${day.rain_mm.toFixed(1)}mm)` : ''}${day.snow_mm > 0 ? ` ❄️ ${day.snow_mm.toFixed(1)}mm` : ''}
+        <p style="font-size: 11px; color: #3b82f6; margin: 8px 0 0 0; font-weight: 600;">
+          💧 ${Math.round(day.pop * 100)}%${day.rain_mm > 0 ? `<br/>${day.rain_mm.toFixed(1)}mm` : ''}${day.snow_mm > 0 ? `<br/>❄️ ${day.snow_mm.toFixed(1)}mm` : ''}
         </p>
         ` : ''}
       </div>
@@ -291,10 +430,40 @@ ${forecastDays.length > 0 ? `
   </div>
 ` : ''}
 
-  <div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 14px; border-top: 1px solid #e5e7eb;">
-    <p style="margin: 0;">Cascina Leone Weather Station · Niella Belbo, Piedmont</p>
-    <p style="margin: 8px 0 0 0;">
-      <a href="https://leone-weather.vercel.app" style="color: #3b82f6; text-decoration: none;">View Full Dashboard</a>
+  <div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; border-top: 1px solid #e5e7eb;">
+    <p style="margin: 0 0 16px 0; font-size: 14px;">
+      <strong>Cascina Leone Weather Station</strong> · Località Novelli, Niella Belbo, Piedmont
+    </p>
+    ${cronStatus ? `
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 500px; margin: 0 auto 16px auto; font-size: 11px; color: #6b7280;">
+      <div style="padding: 8px; background: #f9fafb; border-radius: 4px;">
+        <strong>WeatherLink</strong><br/>
+        ${cronStatus.weatherlink ? new Date(cronStatus.weatherlink).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' }) : 'N/A'}
+      </div>
+      <div style="padding: 8px; background: #f9fafb; border-radius: 4px;">
+        <strong>Forecast</strong><br/>
+        ${cronStatus.forecast ? new Date(cronStatus.forecast).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' }) : 'N/A'}
+      </div>
+      <div style="padding: 8px; background: #f9fafb; border-radius: 4px;">
+        <strong>Overview</strong><br/>
+        ${cronStatus.overview ? new Date(cronStatus.overview).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' }) : 'N/A'}
+      </div>
+      <div style="padding: 8px; background: #f9fafb; border-radius: 4px;">
+        <strong>Horoscope</strong><br/>
+        ${cronStatus.horoscope ? new Date(cronStatus.horoscope).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' }) : 'N/A'}
+      </div>
+      <div style="padding: 8px; background: #f9fafb; border-radius: 4px;">
+        <strong>AQI Data</strong><br/>
+        ${cronStatus.aqi ? new Date(cronStatus.aqi).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' }) : 'N/A'}
+      </div>
+      <div style="padding: 8px; background: #f9fafb; border-radius: 4px;">
+        <strong>Email Sent</strong><br/>
+        ${new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' })}
+      </div>
+    </div>
+    ` : ''}
+    <p style="margin: 0;">
+      <a href="https://weather.altalanga.love" style="color: #3b82f6; text-decoration: none;">View Full Dashboard</a>
     </p>
   </div>
 
