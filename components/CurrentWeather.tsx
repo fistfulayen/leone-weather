@@ -51,8 +51,8 @@ export default function CurrentWeather({ data }: CurrentWeatherProps) {
 
         {/* Sun times */}
         <div className="text-right text-sm text-gray-700">
-          <div>☀️ ↑ {sunrise}</div>
-          <div>☀️ ↓ {sunset}</div>
+          <div>🌅 {sunrise}</div>
+          <div>🌇 {sunset}</div>
         </div>
       </div>
 
@@ -82,11 +82,22 @@ export default function CurrentWeather({ data }: CurrentWeatherProps) {
 
         {pressureTrend && (
           <div>
-            <div className="text-gray-600 text-xs font-medium">Pressure</div>
+            <div className="text-gray-600 text-xs font-medium">💪 Pressure</div>
             <div className="font-bold text-lg text-gray-900">{current.barometer_mmhg?.toFixed(0)} mmHg</div>
             <div className="text-gray-600 text-xs">{pressureTrend}</div>
           </div>
         )}
+      </div>
+
+      {/* Additional weather details with emojis */}
+      <div className="mt-4 pt-4 border-t border-gray-200 space-y-2 text-sm text-gray-700">
+        <div>
+          <strong>🌬️ Wind:</strong> {current.wind_speed_kmh?.toFixed(1)} km/h
+          {current.wind_gust_kmh && ` (gusts to ${current.wind_gust_kmh.toFixed(1)} km/h)`}
+        </div>
+        <div>
+          <strong>💧 Rain today:</strong> {current.rain_day_mm?.toFixed(1)} mm
+        </div>
       </div>
     </div>
   );

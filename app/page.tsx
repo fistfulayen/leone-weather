@@ -7,6 +7,8 @@ import TodaySummary from '@/components/TodaySummary';
 import ChatInterface from '@/components/ChatInterface';
 import LeoneNarrative from '@/components/LeoneNarrative';
 import ForecastCard from '@/components/ForecastCard';
+import CryptoPricesCard from '@/components/CryptoPricesCard';
+import CryptoPunksCard from '@/components/CryptoPunksCard';
 import { getHeaderEmoji } from '@/lib/weather-emoji';
 
 export default function Home() {
@@ -99,6 +101,9 @@ export default function Home() {
 
             {/* Air Quality */}
             {airQualityData && <AirQualityCard data={airQualityData} />}
+
+            {/* Crypto Prices */}
+            <CryptoPricesCard />
           </div>
 
           {/* Right Column - Louisina's Narrative */}
@@ -109,6 +114,9 @@ export default function Home() {
 
         {/* 7-Day Forecast - Full Width */}
         <ForecastCard />
+
+        {/* CryptoPunks Sales - Full Width */}
+        <CryptoPunksCard />
 
         {/* Chat Interface - Full Width */}
         <div className="mt-6">

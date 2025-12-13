@@ -145,6 +145,52 @@ export async function GET() {
       console.error('Error fetching crypto prices:', error);
     }
 
+    // Get CryptoPunks sales data from last 24 hours
+    let cryptoPunksSales = null;
+    try {
+      const punksResponse = await fetch('https://www.cryptopunks.app/cryptopunks/recents');
+      if (punksResponse.ok) {
+        const html = await punksResponse.text();
+
+        // Parse HTML to extract sales data with full details
+        const salesPattern = /href="\/cryptopunks\/details\/(\d+)"[\s\S]*?Bought for ([\d.]+) ETH \(\$([\d,]+(?:\.\d+)?)[^)]*\)[\s\S]*?<div>(\d+) hours? ago<\/div>/gi;
+
+        const sales: Array<{
+          punkId: string;
+          priceEth: number;
+          priceUsd: string;
+          hoursAgo: number;
+          imageUrl: string;
+        }> = [];
+        let match;
+
+        while ((match = salesPattern.exec(html)) !== null) {
+          const hoursAgo = parseInt(match[4]);
+          if (hoursAgo <= 24) {
+            const punkId = match[1];
+            sales.push({
+              punkId: punkId,
+              priceEth: parseFloat(match[2]),
+              priceUsd: match[3],
+              hoursAgo: hoursAgo,
+              imageUrl: `https://www.cryptopunks.app/images/cryptopunks/punk${punkId.padStart(4, '0')}.png`,
+            });
+          }
+        }
+
+        console.log('CryptoPunks sales found:', sales.length);
+
+        if (sales.length > 0) {
+          cryptoPunksSales = sales;
+          console.log('CryptoPunks data prepared:', cryptoPunksSales);
+        } else {
+          console.log('No CryptoPunks sales in last 24 hours');
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching CryptoPunks sales:', error);
+    }
+
     // Get air quality data
     let airQualityData = null;
     try {
@@ -474,6 +520,31 @@ ${forecastDays.length > 0 ? `
         `;
       }).join('')}
     </div>
+  </div>
+` : ''}
+
+${cryptoPunksSales && cryptoPunksSales.length > 0 ? `
+  <div style="background: #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #e5e7eb;">
+    <h2 style="font-size: 24px; margin: 0 0 20px 0; color: #111827;">🔷 CryptoPunks Last 24 Hours (${cryptoPunksSales.length} ${cryptoPunksSales.length === 1 ? 'Sale' : 'Sales'})</h2>
+    ${cryptoPunksSales.map((sale: any) => `
+      <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 12px;">
+        <img
+          src="${sale.imageUrl}"
+          alt="Punk ${sale.punkId}"
+          width="96"
+          height="96"
+          style="border-radius: 4px; image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;"
+        />
+        <div style="flex: 1;">
+          <p style="font-size: 18px; font-weight: 600; color: #111827; margin: 0 0 8px 0;">
+            Punk #${sale.punkId} bought for ${sale.priceEth} ETH ($${sale.priceUsd} USD)
+          </p>
+          <p style="font-size: 14px; color: #6b7280; margin: 0;">
+            ${sale.hoursAgo} hours ago
+          </p>
+        </div>
+      </div>
+    `).join('')}
   </div>
 ` : ''}
 

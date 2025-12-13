@@ -12,6 +12,7 @@ interface ForecastDay {
   pop: number; // probability of precipitation
   rain_mm: number;
   snow_mm: number;
+  wind_speed: number; // in m/s
 }
 
 export default function ForecastCard() {
@@ -91,6 +92,12 @@ export default function ForecastCard() {
                   {Math.round(day.temp_min)}°
                 </span>
               </div>
+
+              {day.wind_speed && (
+                <div className="mt-2 text-xs text-gray-600">
+                  🌬️ {Math.round(day.wind_speed * 3.6)} km/h
+                </div>
+              )}
 
               {(day.rain_mm > 0 || day.snow_mm > 0 || day.pop > 0.3) && (
                 <div className="mt-2 text-xs text-blue-600">
