@@ -77,7 +77,7 @@ export async function GET() {
 
     const weatherOverview = latestOverview?.overview_text || '';
 
-    // Get next 3 days forecast for context
+    // Get full 7-day forecast for context
     const { data: latestForecast } = await supabaseAdmin
       .from('weather_forecasts')
       .select('fetched_at')
@@ -93,13 +93,13 @@ export async function GET() {
         .eq('fetched_at', latestForecast.fetched_at)
         .gte('forecast_date', todayDate)
         .order('forecast_date', { ascending: true })
-        .limit(3);
+        .limit(8);
 
       if (forecasts && forecasts.length > 0) {
-        forecastContext = '\n\nTHE NEXT FEW DAYS:\n' + forecasts.slice(1).map((f: any, i: number) => {
+        forecastContext = '\n\nTHE FULL WEEK AHEAD:\n' + forecasts.slice(1).map((f: any, i: number) => {
           const date = new Date(f.forecast_date);
           const dayName = i === 0 ? 'Tomorrow' : date.toLocaleDateString('en-US', { weekday: 'long' });
-          return `${dayName}: ${f.weather_description}, ${Math.round(f.temp_min)}-${Math.round(f.temp_max)}°C${f.pop > 0.3 ? `, ${Math.round(f.pop * 100)}% chance of ${f.rain_mm > 0 ? 'rain' : 'precipitation'}` : ''}${f.snow_mm > 5 ? ` (${Math.round(f.snow_mm)}mm snow!)` : ''}`;
+          return `${dayName}: ${f.weather_description}, ${Math.round(f.temp_min)}-${Math.round(f.temp_max)}°C${f.pop > 0.3 ? `, ${Math.round(f.pop * 100)}% chance of ${f.rain_mm > 0 ? 'rain' : 'precipitation'}` : ''}${f.snow_mm > 0 ? ` (${Math.round(f.snow_mm)}mm snow!)` : ''}`;
         }).join('\n');
       }
     }
