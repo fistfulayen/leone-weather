@@ -118,18 +118,27 @@ export async function GET() {
     const dayOfWeek = italyTime.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'Europe/Rome' });
     const isWeekend = dayOfWeek === 'Saturday' || dayOfWeek === 'Sunday';
 
-    // Get crypto prices
+    // Get crypto prices with 24h change
     let cryptoPrices = null;
     try {
       const cryptoResponse = await fetch(
-        'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd'
+        'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true'
       );
       if (cryptoResponse.ok) {
         const data = await cryptoResponse.json();
         cryptoPrices = {
-          bitcoin: data.bitcoin?.usd,
-          ethereum: data.ethereum?.usd,
-          solana: data.solana?.usd,
+          bitcoin: {
+            price: data.bitcoin?.usd,
+            change: data.bitcoin?.usd_24h_change,
+          },
+          ethereum: {
+            price: data.ethereum?.usd,
+            change: data.ethereum?.usd_24h_change,
+          },
+          solana: {
+            price: data.solana?.usd,
+            change: data.solana?.usd_24h_change,
+          },
         };
       }
     } catch (error) {
@@ -364,9 +373,13 @@ CRITICAL: Be effusive, honest, warm, theatrical, cheeky. First person. NO MARKDO
       </p>
       ${cryptoPrices ? `
       <p style="margin: 8px 0; color: #4b5563;">
-        <strong>₿ Bitcoin:</strong> $${cryptoPrices.bitcoin?.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ·
-        <strong>Ξ Ethereum:</strong> $${cryptoPrices.ethereum?.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ·
-        <strong>◎ Solana:</strong> $${cryptoPrices.solana?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        <strong>₿ Bitcoin:</strong> <span style="color: ${cryptoPrices.bitcoin.change >= 0 ? '#10b981' : '#ef4444'}; font-weight: 600;">$${cryptoPrices.bitcoin.price?.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span> <span style="font-size: 12px; color: ${cryptoPrices.bitcoin.change >= 0 ? '#10b981' : '#ef4444'};">(${cryptoPrices.bitcoin.change >= 0 ? '+' : ''}${cryptoPrices.bitcoin.change?.toFixed(2)}%)</span>
+      </p>
+      <p style="margin: 8px 0; color: #4b5563;">
+        <strong>Ξ Ethereum:</strong> <span style="color: ${cryptoPrices.ethereum.change >= 0 ? '#10b981' : '#ef4444'}; font-weight: 600;">$${cryptoPrices.ethereum.price?.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span> <span style="font-size: 12px; color: ${cryptoPrices.ethereum.change >= 0 ? '#10b981' : '#ef4444'};">(${cryptoPrices.ethereum.change >= 0 ? '+' : ''}${cryptoPrices.ethereum.change?.toFixed(2)}%)</span>
+      </p>
+      <p style="margin: 8px 0; color: #4b5563;">
+        <strong>◎ Solana:</strong> <span style="color: ${cryptoPrices.solana.change >= 0 ? '#10b981' : '#ef4444'}; font-weight: 600;">$${cryptoPrices.solana.price?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span> <span style="font-size: 12px; color: ${cryptoPrices.solana.change >= 0 ? '#10b981' : '#ef4444'};">(${cryptoPrices.solana.change >= 0 ? '+' : ''}${cryptoPrices.solana.change?.toFixed(2)}%)</span>
       </p>
       ` : ''}
       <p style="margin: 8px 0; color: #4b5563;">
