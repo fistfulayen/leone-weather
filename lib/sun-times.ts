@@ -1,8 +1,8 @@
 import * as SunCalc from 'suncalc';
 
-// Cascina Leone coordinates (Niella Belbo, Piedmont, Italy)
-const CASCINA_LEONE_LAT = 44.5667;
-const CASCINA_LEONE_LON = 8.0167;
+// Cascina Leone coordinates (Località Novelli, Niella Belbo, Piedmont, Italy)
+const CASCINA_LEONE_LAT = 44.520817;
+const CASCINA_LEONE_LON = 8.106246;
 
 export interface SunTimes {
   sunrise: Date;

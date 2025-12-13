@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 
-// Cascina Leone coordinates (Niella Belbo, Piedmont, Italy)
-const LAT = 44.5667;
-const LON = 8.0167;
+// Cascina Leone coordinates (Località Novelli, Niella Belbo, Piedmont, Italy)
+const LAT = 44.520817;
+const LON = 8.106246;
 
 export async function GET() {
   try {
