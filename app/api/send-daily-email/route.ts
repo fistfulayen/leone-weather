@@ -118,6 +118,24 @@ export async function GET() {
     const dayOfWeek = italyTime.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'Europe/Rome' });
     const isWeekend = dayOfWeek === 'Saturday' || dayOfWeek === 'Sunday';
 
+    // Get crypto prices
+    let cryptoPrices = null;
+    try {
+      const cryptoResponse = await fetch(
+        'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd'
+      );
+      if (cryptoResponse.ok) {
+        const data = await cryptoResponse.json();
+        cryptoPrices = {
+          bitcoin: data.bitcoin?.usd,
+          ethereum: data.ethereum?.usd,
+          solana: data.solana?.usd,
+        };
+      }
+    } catch (error) {
+      console.error('Error fetching crypto prices:', error);
+    }
+
     // Get air quality data
     let airQualityData = null;
     try {
@@ -344,6 +362,13 @@ CRITICAL: Be effusive, honest, warm, theatrical, cheeky. First person. NO MARKDO
       <p style="margin: 8px 0; color: #4b5563;">
         <strong>💪 Pressure:</strong> ${current.barometer_mmhg?.toFixed(0)} mmHg
       </p>
+      ${cryptoPrices ? `
+      <p style="margin: 8px 0; color: #4b5563;">
+        <strong>₿ Bitcoin:</strong> $${cryptoPrices.bitcoin?.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ·
+        <strong>Ξ Ethereum:</strong> $${cryptoPrices.ethereum?.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ·
+        <strong>◎ Solana:</strong> $${cryptoPrices.solana?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+      </p>
+      ` : ''}
       <p style="margin: 8px 0; color: #4b5563;">
         <strong>🌅 Sunrise:</strong> ${sunTimes.sunrise.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' })} ·
         <strong>🌇 Sunset:</strong> ${sunTimes.sunset.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' })}
