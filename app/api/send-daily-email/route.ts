@@ -344,6 +344,10 @@ CRITICAL: Be effusive, honest, warm, theatrical, cheeky. First person. NO MARKDO
       <p style="margin: 8px 0; color: #4b5563;">
         <strong>Pressure:</strong> ${current.barometer_mmhg?.toFixed(0)} mmHg
       </p>
+      <p style="margin: 8px 0; color: #4b5563;">
+        <strong>Sunrise:</strong> ${sunTimes.sunrise.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' })} ·
+        <strong>Sunset:</strong> ${sunTimes.sunset.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' })}
+      </p>
     </div>
   </div>
 
@@ -418,6 +422,11 @@ ${forecastDays.length > 0 ? `
           <span style="font-size: 20px; font-weight: bold; color: #111827;">${Math.round(day.temp_max)}°</span>
           <span style="font-size: 14px; color: #9ca3af; margin-left: 6px;">${Math.round(day.temp_min)}°</span>
         </div>
+        ${day.wind_speed ? `
+        <p style="font-size: 10px; color: #6b7280; margin: 8px 0 0 0;">
+          🌬️ ${Math.round(day.wind_speed * 3.6)} km/h
+        </p>
+        ` : ''}
         ${(day.rain_mm > 0 || day.snow_mm > 0 || day.pop > 0.3) ? `
         <p style="font-size: 11px; color: #3b82f6; margin: 8px 0 0 0; font-weight: 600;">
           💧 ${Math.round(day.pop * 100)}%${day.rain_mm > 0 ? `<br/>${day.rain_mm.toFixed(1)}mm` : ''}${day.snow_mm > 0 ? `<br/>❄️ ${day.snow_mm.toFixed(1)}mm` : ''}
