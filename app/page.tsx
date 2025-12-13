@@ -15,6 +15,7 @@ export default function Home() {
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substring(7)}`);
   const [lastUpdate, setLastUpdate] = useState<string>('');
   const [headerEmoji, setHeaderEmoji] = useState<string>('☀️');
+  const [cronStatus, setCronStatus] = useState<any>(null);
 
   useEffect(() => {
     fetchData();
@@ -53,6 +54,13 @@ export default function Home() {
       if (aqRes.ok) {
         const data = await aqRes.json();
         setAirQualityData(data);
+      }
+
+      // Fetch cron status
+      const cronRes = await fetch('/api/cron-status');
+      if (cronRes.ok) {
+        const data = await cronRes.json();
+        setCronStatus(data);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -108,8 +116,18 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <footer className="mt-8 text-center text-xs text-gray-500">
-          Last updated: {lastUpdate || 'Loading...'} · Station: Cascina Leone, Niella Belbo
+        <footer className="mt-8 text-center text-xs text-gray-500 space-y-1">
+          <div>Station: Cascina Leone, Località Novelli, Niella Belbo</div>
+          {cronStatus && (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 max-w-3xl mx-auto">
+              <div>WeatherLink: {cronStatus.weatherlink ? new Date(cronStatus.weatherlink).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' }) : 'N/A'}</div>
+              <div>Forecast: {cronStatus.forecast ? new Date(cronStatus.forecast).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' }) : 'N/A'}</div>
+              <div>Overview: {cronStatus.overview ? new Date(cronStatus.overview).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' }) : 'N/A'}</div>
+              <div>Horoscope: {cronStatus.horoscope ? new Date(cronStatus.horoscope).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' }) : 'N/A'}</div>
+              <div>Daily Summary: {cronStatus.daily_summary ? new Date(cronStatus.daily_summary).toLocaleDateString('en-GB', { timeZone: 'Europe/Rome' }) : 'N/A'}</div>
+              <div>AQI Data: {cronStatus.aqi ? new Date(cronStatus.aqi).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' }) : 'N/A'}</div>
+            </div>
+          )}
         </footer>
       </div>
     </main>
