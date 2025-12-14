@@ -60,6 +60,20 @@ export async function GET() {
     const todayDate = new Date().toLocaleDateString('en-CA', {
       timeZone: 'Europe/Rome',
     });
+
+    // Check if Hedvig & Ian are present at Cascina Leone today
+    const { data: presenceCheck, error: presenceError } = await supabaseAdmin
+      .rpc('is_present_on_date', { check_date: todayDate });
+
+    console.log('=== PRESENCE CHECK (Website) ===');
+    console.log('Date:', todayDate);
+    console.log('RPC result:', presenceCheck);
+    console.log('RPC error:', presenceError);
+
+    const isPresent = presenceCheck === true;
+    console.log('Is present?', isPresent);
+    console.log('====================================');
+
     const { data: horoscope } = await supabaseAdmin
       .from('daily_horoscopes')
       .select('*')
@@ -121,13 +135,13 @@ ${weatherContext.rain_today && weatherContext.rain_today > 0 ? `Rain today: ${we
 Barometric pressure: ${weatherContext.barometer?.toFixed(0)} mmHg${forecastContext}${weatherOverview ? `\n\nWEATHER SUMMARY:\n${weatherOverview}` : ''}
 
 PARAGRAPH 1 - TODAY'S WEATHER & FORECAST:
-Step outside RIGHT NOW and feel the weather dramatically. How does the air touch your skin? What do you smell? Then look at TODAY'S forecast and tell them what to do TODAY. ${isWeekend ? 'It\'s the WEEKEND - think leisure, hosting friends, escapes to the Alps or Mediterranean, big projects in the food forest, long motorcycle rides, entertaining!' : 'It\'s a WEEKDAY - balance work with outdoor moments, quick sauna breaks, tending the garden between tasks, practical planning.'}
+${isPresent ? `Step outside RIGHT NOW and feel the weather dramatically. How does the air touch your skin? What do you smell? Then look at TODAY'S forecast and tell them what to do TODAY. ${isWeekend ? 'It\'s the WEEKEND - think leisure, hosting friends, escapes to the Alps or Mediterranean, big projects in the food forest, long motorcycle rides, entertaining!' : 'It\'s a WEEKDAY - balance work with outdoor moments, quick sauna breaks, tending the garden between tasks, practical planning.'}` : `They are AWAY from Cascina Leone right now, but you're still here watching over everything! Describe the weather as YOU experience it in their absence. Express how you miss them and long for their return. What is the weather doing while they're gone? When they return, what weather will greet them?`}
 
 PARAGRAPH 2 - WEEK AHEAD FORECAST & PLANNING:
 Look at the coming days' forecast. What should they plan for THE WEEK? ${isWeekend ? 'Weekend is here - should they invite friends over? Plan a mountain escape? Work on big outdoor projects?' : 'Weekdays ahead - what should they prepare for? When can they steal outdoor time? What about the upcoming weekend?'} Use the specific forecast to make CONCRETE suggestions.
 
-PARAGRAPH 3 - TONIGHT'S DINNER & WINE EDUCATION:
-Who cooks tonight? Hedvig (Plin with butter/sage, meats from Niella Belbo butcher, wild boar from Matteo) or Ian (hummus, apple crisp, kale salad, pesto, Totino's Pizza)? Choose based on weather + your mood about gender roles! Or maybe go out (Green Cafe for Italian practice? Nonno Grillo? Splurge at Drougerie?).
+PARAGRAPH 3 - ${isPresent ? 'TONIGHT\'S DINNER & WINE EDUCATION' : 'WINE EDUCATION & LONGING'}:
+${isPresent ? `Who cooks tonight? Hedvig (Plin with butter/sage, meats from Niella Belbo butcher, wild boar from Matteo) or Ian (hummus, apple crisp, kale salad, pesto, Totino's Pizza)? Choose based on weather + your mood about gender roles! Or maybe go out (Green Cafe for Italian practice? Nonno Grillo? Splurge at Drougerie?).
 
 WINE TEACHING - Pick ONE local wine and EDUCATE them thoroughly:
 - Producer + their story (organic? biodynamic? traditional? modern?)
@@ -135,7 +149,9 @@ WINE TEACHING - Pick ONE local wine and EDUCATE them thoroughly:
 - Detailed tasting notes (aromas, flavors, structure, finish)
 - Why it pairs with tonight's meal AND weather
 
-Local producers: Valdibà, Pecchenino, San Fereolo (Dogliani Dolcetto); Marcalberto, Ca' d'Gal, Paolo Saracco (Alta Langa/Moscato); Bartolo Mascarello, Giuseppe Rinaldi, G.D. Vajra, Cavallotto, Burlotto (Barolo); Roagna, Sottimano (Barbaresco); Braida (Barbera d'Asti); Matteo Correggia, Malvirà (Roero Nebbiolo/Arneis).
+Local producers: Valdibà, Pecchenino, San Fereolo (Dogliani Dolcetto); Marcalberto, Ca' d'Gal, Paolo Saracco (Alta Langa/Moscato); Bartolo Mascarello, Giuseppe Rinaldi, G.D. Vajra, Cavallotto, Burlotto (Barolo); Roagna, Sottimano (Barbaresco); Braida (Barbera d'Asti); Matteo Correggia, Malvirà (Roero Nebbiolo/Arneis).` : `They're away from Cascina Leone, but you can still teach them about ONE local wine to remember, dream about, or seek out wherever they are! Pick a wine that matches the WEATHER or SEASON back home. Be nostalgic and romantic about it - make them MISS being here to drink it with dinner while watching the hills.
+
+Local producers: Valdibà, Pecchenino, San Fereolo (Dogliani Dolcetto); Marcalberto, Ca' d'Gal, Paolo Saracco (Alta Langa/Moscato); Bartolo Mascarello, Giuseppe Rinaldi, G.D. Vajra, Cavallotto, Burlotto (Barolo); Roagna, Sottimano (Barbaresco); Braida (Barbera d'Asti); Matteo Correggia, Malvirà (Roero Nebbiolo/Arneis).`}
 
 PARAGRAPH 4 - PISCES/VIRGO HOROSCOPE:
 Weave the daily horoscope themes (below) into PERSONAL advice for Hedvig + Ian. Connect today's astrological energy to:
