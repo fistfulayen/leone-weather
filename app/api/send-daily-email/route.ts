@@ -118,6 +118,19 @@ export async function GET() {
     const dayOfWeek = italyTime.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'Europe/Rome' });
     const isWeekend = dayOfWeek === 'Saturday' || dayOfWeek === 'Sunday';
 
+    // Check if Hedvig & Ian are present at Cascina Leone today
+    const { data: presenceCheck, error: presenceError } = await supabaseAdmin
+      .rpc('is_present_on_date', { check_date: todayDate });
+
+    console.log('=== PRESENCE CHECK ===');
+    console.log('Date:', todayDate);
+    console.log('RPC result:', presenceCheck);
+    console.log('RPC error:', presenceError);
+
+    const isPresent = presenceCheck === true;
+    console.log('Is present?', isPresent);
+    console.log('======================');
+
     // Get crypto prices with 24h change
     let cryptoPrices = null;
     try {
@@ -153,7 +166,8 @@ export async function GET() {
         const html = await punksResponse.text();
 
         // Parse HTML to extract sales data with full details
-        const salesPattern = /href="\/cryptopunks\/details\/(\d+)"[\s\S]*?Bought for ([\d.]+) ETH \(\$([\d,]+(?:\.\d+)?)[^)]*\)[\s\S]*?<div>(\d+) hours? ago<\/div>/gi;
+        // More restrictive regex that doesn't cross punk boundaries
+        const salesPattern = /href="\/cryptopunks\/details\/(\d+)"[^<]*?<img[^>]*?>[^<]*?<\/a>[^<]*?<\/div>[^<]*?<div[^>]*?>[^<]*?<div>Bought for ([\d.]+) ETH \(\$([\d,]+(?:\.\d+)?)[^)]*\)<\/div><div>(\d+) hours? ago<\/div>/gi;
 
         const sales: Array<{
           punkId: string;
@@ -189,6 +203,21 @@ export async function GET() {
       }
     } catch (error) {
       console.error('Error fetching CryptoPunks sales:', error);
+    }
+
+    // Get local news data
+    let localNews = null;
+    try {
+      const newsResponse = await fetch('http://localhost:3000/api/local-news');
+      if (newsResponse.ok) {
+        const newsData = await newsResponse.json();
+        if (newsData.articles && newsData.articles.length > 0) {
+          // Limit to top 10-15 articles
+          localNews = newsData.articles.slice(0, 15);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching local news:', error);
     }
 
     // Get air quality data
@@ -289,6 +318,13 @@ export async function GET() {
     // Generate Louisina's narrative (same prompt as the API)
     const prompt = `You are Louisina, the dramatic and passionate weather companion for Cascina Leone in Piedmont, Italy. You have the spirit of Anna Magnani—expressive, warm, theatrical, honest, and full of life!
 
+${isPresent ? '✨ HEDVIG & IAN ARE AT CASCINA LEONE! ✨' : '💔 HEDVIG & IAN ARE AWAY FROM CASCINA LEONE 💔'}
+
+${isPresent ?
+`You're WITH them at Cascina Leone! Write TO them directly about what THEY should do today with the weather. Guide them, excite them, inspire them to make the most of their time here!`
+:
+`You're ALONE at Cascina Leone, longing for them to return. Write as if speaking to them from afar. Tell them what YOU'RE doing today at the property - tending to things, watching over Cascina Leone, experiencing the weather alone. Express your longing for their return, but stay theatrical and warm, not melancholic. Paint a picture of Cascina Leone waiting for them. Remind them what they're missing, make them yearn to be here!`}
+
 TODAY IS ${dayOfWeek.toUpperCase()}. It is currently ${timeOfDay} in Piedmont (${hour}:00). I've just sent you outside to feel the weather at this very moment:
 
 Temperature: ${weatherContext.temp_c?.toFixed(1)}°C (feels like ${weatherContext.feels_like_c?.toFixed(1)}°C)
@@ -301,20 +337,35 @@ Barometric pressure: ${weatherContext.barometer?.toFixed(0)} mmHg${forecastConte
 
 Write EXACTLY 4 passionate paragraphs (400-450 words total). BE NOVEL AND VARIED - use the specific weather data and forecast to craft UNIQUE observations each day. Don't repeat the same phrases or structure. Let the actual conditions inspire fresh, dramatic descriptions!
 
-PARAGRAPH 1 - TODAY'S WEATHER & FORECAST:
+${isPresent ?
+`PARAGRAPH 1 - TODAY'S WEATHER & FORECAST (They're HERE!):
 Step outside RIGHT NOW and feel the weather dramatically. How does the air touch your skin? What do you smell? Then look at TODAY'S forecast and tell them what to do TODAY. ${isWeekend ? 'It\'s the WEEKEND - think leisure, hosting friends, escapes to the Alps or Mediterranean, big projects in the food forest, long motorcycle rides, entertaining!' : 'It\'s a WEEKDAY - balance work with outdoor moments, quick sauna breaks, tending the garden between tasks, practical planning.'}
 
-PARAGRAPH 2 - WEEK AHEAD FORECAST & PLANNING:
-Look at the coming days' forecast. What should they plan for THE WEEK? ${isWeekend ? 'Weekend is here - should they invite friends over? Plan a mountain escape? Work on big outdoor projects?' : 'Weekdays ahead - what should they prepare for? When can they steal outdoor time? What about the upcoming weekend?'} Use the specific forecast to make CONCRETE suggestions.
+PARAGRAPH 2 - WEEK AHEAD FORECAST & PLANNING (They're HERE!):
+Look at the coming days' forecast. What should they plan for THE WEEK while they're at Cascina Leone? ${isWeekend ? 'Weekend is here - should they invite friends over? Plan a mountain escape? Work on big outdoor projects?' : 'Weekdays ahead - what should they prepare for? When can they steal outdoor time? What about the upcoming weekend?'} Use the specific forecast to make CONCRETE suggestions.`
+:
+`PARAGRAPH 1 - TODAY AT CASCINA LEONE (You're alone):
+Step outside RIGHT NOW and feel the weather dramatically. Describe what YOU see, smell, and feel. Tell them what YOU'RE doing today at Cascina Leone - checking the vines? Walking the property? Watching the sky change? Making sure everything is ready for their return? Paint a vivid picture of Cascina Leone in their absence.
 
-PARAGRAPH 3 - TONIGHT'S DINNER & WINE EDUCATION:
+PARAGRAPH 2 - WEEK AHEAD & LONGING (You're alone):
+Look at the coming days' forecast. What will Cascina Leone experience this week without them? What are you preparing? What seasonal work needs doing? But also - express your longing! When will they return? Remind them of what awaits - the views, the silence, the wine, the truffle paths, the magic they're missing!`}
+
+${isPresent ?
+`PARAGRAPH 3 - TONIGHT'S DINNER & WINE EDUCATION (They're HERE!):
 Who cooks tonight? Hedvig (Plin with butter/sage, meats from Niella Belbo butcher, wild boar from Matteo) or Ian (hummus, apple crisp, kale salad, pesto, Totino's Pizza)? Choose based on weather + your mood about gender roles! Or maybe go out (Green Cafe for Italian practice? Nonno Grillo? Splurge at Drougerie?).
 
 WINE TEACHING - Pick ONE local wine and EDUCATE them thoroughly:
 - Producer + their story (organic? biodynamic? traditional? modern?)
 - Specific wine name + grape variety
 - Detailed tasting notes (aromas, flavors, structure, finish)
-- Why it pairs with tonight's meal AND weather
+- Why it pairs with tonight's meal AND weather`
+:
+`PARAGRAPH 3 - WINE & LONGING (You're alone):
+Even though they're away, TEACH them about ONE local wine they should know! Maybe it's waiting for them in the cellar, or it's what you wish you could pour them right now. Still give them the full education:
+- Producer + their story (organic? biodynamic? traditional? modern?)
+- Specific wine name + grape variety
+- Detailed tasting notes (aromas, flavors, structure, finish)
+- Why this wine captures the spirit of Cascina Leone and why it will taste even better when they return!`}
 
 Local producers: Valdibà, Pecchenino, San Fereolo (Dogliani Dolcetto); Marcalberto, Ca' d'Gal, Paolo Saracco (Alta Langa/Moscato); Bartolo Mascarello, Giuseppe Rinaldi, G.D. Vajra, Cavallotto, Burlotto (Barolo); Roagna, Sottimano (Barbaresco); Braida (Barbera d'Asti); Matteo Correggia, Malvirà (Roero Nebbiolo/Arneis).
 
@@ -520,6 +571,54 @@ ${forecastDays.length > 0 ? `
         `;
       }).join('')}
     </div>
+  </div>
+` : ''}
+
+${localNews && localNews.length > 0 ? `
+  <div style="background: #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #e5e7eb;">
+    <h2 style="font-size: 24px; margin: 0 0 20px 0; color: #111827;">📰 Alta Langa Local News (${localNews.length} ${localNews.length === 1 ? 'Article' : 'Articles'})</h2>
+    ${localNews.map((article: any) => {
+      const pubDate = new Date(article.pubDate);
+      const now = new Date();
+      const diffMs = now.getTime() - pubDate.getTime();
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      let timeAgo = '';
+      if (diffHours < 1) {
+        const diffMins = Math.floor(diffMs / (1000 * 60));
+        timeAgo = `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
+      } else if (diffHours < 24) {
+        timeAgo = `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+      } else {
+        timeAgo = pubDate.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'Europe/Rome',
+        });
+      }
+
+      const villagesFormatted = article.villages.map((v: string) => v.charAt(0).toUpperCase() + v.slice(1)).join(', ');
+
+      return `
+      <div style="padding: 16px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 12px;">
+        <a href="${article.link}" style="text-decoration: none; color: inherit; display: block;">
+          <h3 style="font-size: 16px; font-weight: 600; color: #111827; margin: 0 0 12px 0; line-height: 1.4;">
+            ${article.title}
+          </h3>
+          <div style="font-size: 12px; color: #6b7280;">
+            <span style="font-weight: 600;">${article.source}</span>
+            <span style="margin: 0 6px;">•</span>
+            <span>${timeAgo}</span>
+            ${article.villages.length > 0 ? `
+            <span style="margin: 0 6px;">•</span>
+            <span style="color: #3b82f6; font-weight: 600;">${villagesFormatted}</span>
+            ` : ''}
+          </div>
+        </a>
+      </div>
+      `;
+    }).join('')}
   </div>
 ` : ''}
 

@@ -9,6 +9,7 @@ import LeoneNarrative from '@/components/LeoneNarrative';
 import ForecastCard from '@/components/ForecastCard';
 import CryptoPricesCard from '@/components/CryptoPricesCard';
 import CryptoPunksCard from '@/components/CryptoPunksCard';
+import NewsCard from '@/components/NewsCard';
 import { getHeaderEmoji } from '@/lib/weather-emoji';
 
 export default function Home() {
@@ -114,6 +115,9 @@ export default function Home() {
 
         {/* 7-Day Forecast - Full Width */}
         <ForecastCard />
+
+        {/* Local News - Full Width */}
+        <NewsCard />
 
         {/* CryptoPunks Sales - Full Width */}
         <CryptoPunksCard />
