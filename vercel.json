@@ -21,6 +21,10 @@
       "schedule": "0 * * * *"
     },
     {
+      "path": "/api/fetch-ski-reports",
+      "schedule": "0 */6 * * *"
+    },
+    {
       "path": "/api/daily-summary",
       "schedule": "0 1 * * *"
     },
