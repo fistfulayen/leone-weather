@@ -17,9 +17,6 @@ function getSeason(date: Date): string {
 
 export async function GET(request: Request) {
   try {
-    const startTime = Date.now();
-    console.log('=== EMAIL GENERATION STARTED ===');
-
     // Check if this is a preview request (for website display)
     const { searchParams } = new URL(request.url);
     const isPreview = searchParams.get('preview') === 'true';
@@ -146,7 +143,6 @@ export async function GET(request: Request) {
     const isPresent = presenceCheck === true;
     console.log('Is present?', isPresent);
     console.log('======================');
-    console.log(`⏱️  Time to fetch weather/presence data: ${Date.now() - startTime}ms`);
 
     // Get crypto prices from database (fetched by cron job)
     let cryptoPrices = null;
@@ -307,7 +303,6 @@ export async function GET(request: Request) {
     } catch (error) {
       console.error('Error fetching air quality for email:', error);
     }
-    console.log(`⏱️  Time after all data fetching: ${Date.now() - startTime}ms`);
 
     // Get cron status data
     let cronStatus = null;
@@ -440,8 +435,6 @@ KEEP IT CONCISE: Each paragraph should be 3-4 sentences maximum. Get to the poin
 
 Sign off: "— Louisina 🦁"`;
 
-    console.log(`⏱️  Starting Claude API call...`);
-    const claudeStart = Date.now();
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-5-20250929',
       max_tokens: 900,
@@ -454,8 +447,6 @@ Sign off: "— Louisina 🦁"`;
     });
 
     const narrative = response.content[0].type === 'text' ? response.content[0].text : '';
-    console.log(`⏱️  Claude API call completed in ${Date.now() - claudeStart}ms`);
-    console.log(`⏱️  Total time before HTML generation: ${Date.now() - startTime}ms`);
 
     // Format email HTML
     const emailHtml = `
@@ -766,8 +757,6 @@ ${cryptoPunksSales && cryptoPunksSales.length > 0 ? `
 
     // If preview mode, return HTML directly for website display
     if (isPreview) {
-      console.log(`⏱️  TOTAL TIME (preview): ${Date.now() - startTime}ms`);
-      console.log('=== EMAIL GENERATION COMPLETED ===');
       return new Response(emailHtml, {
         headers: {
           'Content-Type': 'text/html',
