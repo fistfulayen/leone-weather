@@ -247,17 +247,49 @@ export async function GET(request: Request) {
         ? `https://${process.env.VERCEL_URL}`
         : 'http://localhost:3000';
 
-      // Build context for the painting
+      // Build FULL context for the painting (everything Louisina sees)
       const paintingContext = {
+        // Weather
         temperature: current.temp_c,
+        feelsLike: current.wind_chill_c || current.heat_index_c || current.temp_c,
         conditions: current.weather_description || 'current weather',
         season: getSeason(now),
         timeOfDay,
+        windSpeed: current.wind_speed_kmh,
+        windGust: current.wind_gust_kmh,
+        rainToday: current.rain_day_mm,
+        humidity: current.humidity,
+
+        // Presence
         isPresent,
+
+        // Horoscope
+        horoscope: horoscope?.horoscope_text,
+        luckyColors: horoscope?.lucky_colors,
+        luckyNumbers: horoscope?.lucky_numbers,
+
+        // Forecast summary
+        forecast: forecastDays?.slice(0, 3).map(d =>
+          `${new Date(d.forecast_date).toLocaleDateString('en-US', { weekday: 'short' })}: ${d.weather_description}, ${Math.round(d.temp_max)}°/${Math.round(d.temp_min)}°`
+        ).join('; '),
+
+        // News headlines (top 3)
+        news: localNews?.slice(0, 3).map(article => article.title).join('; '),
+
+        // Crypto prices
+        cryptoPrices: cryptoPrices ? {
+          bitcoin: cryptoPrices.bitcoin,
+          ethereum: cryptoPrices.ethereum,
+        } : null,
+
+        // CryptoPunks (if any)
+        cryptoPunks: cryptoPunksSales?.map(punk =>
+          `Punk #${punk.punkId} sold for ${punk.priceEth} ETH ($${punk.priceUsd})`
+        ).join('; '),
       };
 
       const contextParam = encodeURIComponent(JSON.stringify(paintingContext));
-      console.log('Fetching daily painting from:', `${baseUrl}/api/daily-painting?context=${contextParam}`);
+      console.log('Fetching daily painting with full context from:', `${baseUrl}/api/daily-painting?context=...`);
 
       const paintingResponse = await fetch(`${baseUrl}/api/daily-painting?context=${contextParam}`);
       if (paintingResponse.ok) {

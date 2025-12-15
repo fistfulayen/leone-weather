@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import Anthropic from '@anthropic-ai/sdk';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -23,11 +24,11 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const contextParam = searchParams.get('context');
 
-    // Parse the weather/context data (same context Louisina uses)
-    let weatherContext = null;
+    // Parse the FULL context data (same as Louisina gets)
+    let fullContext = null;
     if (contextParam) {
       try {
-        weatherContext = JSON.parse(decodeURIComponent(contextParam));
+        fullContext = JSON.parse(decodeURIComponent(contextParam));
       } catch (e) {
         console.error('Failed to parse context:', e);
       }
@@ -69,51 +70,139 @@ export async function GET(request: Request) {
     const base64Image = imageBuffer.toString('base64');
     const mimeType = selectedImage.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
 
-    // Build the painting prompt using the same context Louisina uses
-    let promptContext = `Transform this photograph of Cascina Leone in Piemonte, Italy into a museum-quality oil painting in the style of ${todaysPainter.name} (${todaysPainter.period}). `;
+    // Use Claude to analyze the image WITH ALL OF LOUISINA'S CONTEXT
+    const anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
 
-    if (weatherContext) {
-      promptContext += `The painting should capture the ${weatherContext.season} atmosphere with ${weatherContext.temperature}°C ${weatherContext.conditions} weather during ${weatherContext.timeOfDay}. `;
+    // Build the full context description for Claude (everything Louisina sees)
+    let contextDescription = '';
+    if (fullContext) {
+      contextDescription = `
+CONTEXT FOR THE PAINTING (same context Louisina uses for her weather report):
 
-      if (weatherContext.isPresent !== undefined) {
-        promptContext += weatherContext.isPresent
-          ? `The estate feels alive with the owners' presence. `
-          : `The estate has a serene, unoccupied tranquility. `;
-      }
+WEATHER:
+- Temperature: ${fullContext.temperature}°C (feels like ${fullContext.feelsLike}°C)
+- Conditions: ${fullContext.conditions}
+- Season: ${fullContext.season}
+- Time of day: ${fullContext.timeOfDay}
+- Wind: ${fullContext.windSpeed} km/h${fullContext.windGust ? ` (gusts to ${fullContext.windGust} km/h)` : ''}
+- Rain today: ${fullContext.rainToday} mm
+- Humidity: ${fullContext.humidity}%
+- Location: Cascina Leone, Piemonte, Italy
+
+PRESENCE:
+- Owners present: ${fullContext.isPresent ? 'Yes - estate is alive with activity' : 'No - serene, unoccupied tranquility'}
+
+${fullContext.horoscope ? `
+HOROSCOPE (Virgo-Pisces):
+${fullContext.horoscope}
+Lucky colors: ${fullContext.luckyColors}
+Lucky numbers: ${fullContext.luckyNumbers}
+` : ''}
+
+${fullContext.forecast ? `
+WEATHER FORECAST:
+${fullContext.forecast}
+` : ''}
+
+${fullContext.news ? `
+LOCAL NEWS HEADLINES:
+${fullContext.news}
+` : ''}
+
+${fullContext.cryptoPrices ? `
+CRYPTO MARKETS:
+Bitcoin: $${fullContext.cryptoPrices.bitcoin.price} (${fullContext.cryptoPrices.bitcoin.change >= 0 ? '+' : ''}${fullContext.cryptoPrices.bitcoin.change}%)
+Ethereum: $${fullContext.cryptoPrices.ethereum.price} (${fullContext.cryptoPrices.ethereum.change >= 0 ? '+' : ''}${fullContext.cryptoPrices.ethereum.change}%)
+` : ''}
+
+${fullContext.cryptoPunks ? `
+CRYPTOPUNKS SALES:
+${fullContext.cryptoPunks}
+` : ''}
+`;
     }
 
-    promptContext += `Paint in ${todaysPainter.name}'s distinctive style: ${todaysPainter.style}. `;
-    promptContext += `Display the finished oil painting in an ornate museum-quality gilt frame with elaborate baroque scrollwork and acanthus leaf details.`;
+    const claudePrompt = `You are an expert art curator helping create a DALL-E 3 prompt for an oil painting.
 
-    console.log('Generated prompt:', promptContext);
+TASK: Analyze this photograph of Cascina Leone and create a detailed DALL-E 3 prompt that will generate a museum-quality oil painting in the style of ${todaysPainter.name} (${todaysPainter.period}).
+
+${contextDescription}
+
+PAINTER'S STYLE: ${todaysPainter.style}
+
+INSTRUCTIONS:
+1. Describe what you see in the photograph in rich visual detail
+2. Incorporate the weather/seasonal context into the painting's mood and atmosphere
+3. Weave in the emotional context (presence, horoscope themes, local events)
+4. Specify how ${todaysPainter.name} would paint this scene using their distinctive techniques
+5. Include a museum-quality ornate gilt frame with baroque details
+
+Your DALL-E 3 prompt should be 4-5 sentences that paint a vivid picture. Be specific about:
+- Composition and perspective
+- Lighting and atmosphere (informed by weather/time of day)
+- Color palette (influenced by painter's style and weather)
+- Brushwork and technique specific to ${todaysPainter.name}
+- Emotional mood (informed by presence, horoscope, current events)
+- The ornate gilt frame
+
+Return ONLY the DALL-E 3 prompt, nothing else.`;
+
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-5-20250929',
+      max_tokens: 1024,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'image',
+              source: {
+                type: 'base64',
+                media_type: mimeType,
+                data: base64Image,
+              },
+            },
+            {
+              type: 'text',
+              text: claudePrompt,
+            },
+          ],
+        },
+      ],
+    });
+
+    const dallePrompt = response.content[0].type === 'text' ? response.content[0].text : '';
+
+    console.log('Claude-generated DALL-E prompt:', dallePrompt);
 
     // Check if OpenAI API key is available
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json({
         painter: todaysPainter,
         sourceImage: selectedImage,
-        prompt: promptContext,
+        prompt: dallePrompt,
         imageUrl: null,
         error: 'OpenAI API key not configured. Add OPENAI_API_KEY to .env.local to generate images.',
       });
     }
 
-    // Generate the painting using gpt-image-1 with the camera image as input
-    // Create a FormData object for the multipart request
-    const formData = new FormData();
-    const imageBlob = new Blob([imageBuffer], { type: mimeType });
-    formData.append('image', imageBlob, selectedImage);
-    formData.append('model', 'gpt-image-1');
-    formData.append('prompt', promptContext);
-    formData.append('n', '1');
-    formData.append('size', '1024x1024');
-
-    const openaiResponse = await fetch('https://api.openai.com/v1/images/edits', {
+    // Generate the painting using DALL-E 3 (text-to-image)
+    const openaiResponse = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
       },
-      body: formData,
+      body: JSON.stringify({
+        model: 'dall-e-3',
+        prompt: dallePrompt,
+        n: 1,
+        size: '1024x1024',
+        quality: 'hd',
+        style: 'vivid',
+      }),
     });
 
     if (!openaiResponse.ok) {
@@ -122,7 +211,7 @@ export async function GET(request: Request) {
       return NextResponse.json({
         painter: todaysPainter,
         sourceImage: selectedImage,
-        prompt: promptContext,
+        prompt: dallePrompt,
         imageUrl: null,
         error: `Image generation failed: ${error}`,
       }, { status: 500 });
@@ -130,13 +219,16 @@ export async function GET(request: Request) {
 
     const openaiData = await openaiResponse.json();
     const imageUrl = openaiData.data[0].url;
+    const revisedPrompt = openaiData.data[0].revised_prompt;
 
     console.log('Generated image URL:', imageUrl);
+    console.log('DALL-E revised prompt:', revisedPrompt);
 
     return NextResponse.json({
       painter: todaysPainter,
       sourceImage: selectedImage,
-      prompt: promptContext,
+      prompt: dallePrompt,
+      revisedPrompt: revisedPrompt,
       imageUrl: imageUrl,
     });
 
