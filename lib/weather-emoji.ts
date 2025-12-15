@@ -6,9 +6,9 @@ interface WeatherData {
 }
 
 /**
- * Calculate the current moon phase emoji
+ * Calculate the current moon phase
  */
-export function getMoonPhaseEmoji(): string {
+function getMoonPhase(): { emoji: string; name: string; phase: number } {
   const now = new Date();
 
   // Known new moon date: January 11, 2024
@@ -21,15 +21,62 @@ export function getMoonPhaseEmoji(): string {
   // Calculate current position in lunar cycle
   const phase = (daysSinceNewMoon % lunarCycleDays) / lunarCycleDays;
 
-  // Return appropriate moon emoji based on phase
-  if (phase < 0.03 || phase > 0.97) return '🌑'; // New moon
-  if (phase < 0.22) return '🌒'; // Waxing crescent
-  if (phase < 0.28) return '🌓'; // First quarter
-  if (phase < 0.47) return '🌔'; // Waxing gibbous
-  if (phase < 0.53) return '🌕'; // Full moon
-  if (phase < 0.72) return '🌖'; // Waning gibbous
-  if (phase < 0.78) return '🌗'; // Last quarter
-  return '🌘'; // Waning crescent
+  // Return appropriate moon emoji and name based on phase
+  if (phase < 0.03 || phase > 0.97) return { emoji: '🌑', name: 'New Moon', phase };
+  if (phase < 0.22) return { emoji: '🌒', name: 'Waxing Crescent', phase };
+  if (phase < 0.28) return { emoji: '🌓', name: 'First Quarter', phase };
+  if (phase < 0.47) return { emoji: '🌔', name: 'Waxing Gibbous', phase };
+  if (phase < 0.53) return { emoji: '🌕', name: 'Full Moon', phase };
+  if (phase < 0.72) return { emoji: '🌖', name: 'Waning Gibbous', phase };
+  if (phase < 0.78) return { emoji: '🌗', name: 'Last Quarter', phase };
+  return { emoji: '🌘', name: 'Waning Crescent', phase };
+}
+
+/**
+ * Calculate the current moon phase emoji
+ */
+export function getMoonPhaseEmoji(): string {
+  return getMoonPhase().emoji;
+}
+
+/**
+ * Get moon phase with planting guidance
+ */
+export function getMoonPhaseInfo(): { name: string; emoji: string; goodForPlanting: boolean; plantingAdvice: string } {
+  const moonPhase = getMoonPhase();
+
+  // Waxing moon (new to full) is good for planting above-ground crops
+  // Waning moon (full to new) is good for root crops and pruning
+  const isWaxing = moonPhase.phase >= 0 && moonPhase.phase < 0.5;
+  const goodForPlanting = isWaxing;
+
+  let plantingAdvice = '';
+  if (moonPhase.phase < 0.03 || moonPhase.phase > 0.97) {
+    // New moon
+    plantingAdvice = 'Perfect time to plant leafy greens and herbs in the food forest!';
+  } else if (moonPhase.phase < 0.25) {
+    // Waxing crescent to first quarter
+    plantingAdvice = 'Excellent for planting above-ground crops - the moon is pulling growth upward!';
+  } else if (moonPhase.phase < 0.5) {
+    // Waxing gibbous
+    plantingAdvice = 'Still good for planting before the full moon - strong growth energy!';
+  } else if (moonPhase.phase < 0.55) {
+    // Full moon
+    plantingAdvice = 'Full moon energy! Better for harvesting than planting, but great for transplanting.';
+  } else if (moonPhase.phase < 0.75) {
+    // Waning gibbous to last quarter
+    plantingAdvice = 'Perfect time to plant root vegetables and bulbs - energy moves downward!';
+  } else {
+    // Waning crescent
+    plantingAdvice = 'Good for pruning, weeding, and preparing soil for the next new moon planting.';
+  }
+
+  return {
+    name: moonPhase.name,
+    emoji: moonPhase.emoji,
+    goodForPlanting,
+    plantingAdvice
+  };
 }
 
 /**

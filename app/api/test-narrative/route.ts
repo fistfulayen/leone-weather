@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { anthropic } from '@/lib/claude';
+import { getMoonPhaseInfo } from '@/lib/weather-emoji';
 
 // Test endpoint for debugging Louisina's narrative generation
 // This generates a narrative on-demand but does NOT store it in the database
@@ -118,6 +119,9 @@ export async function GET() {
 
     const isPresent = presenceCheck === true;
 
+    // Get moon phase for planting guidance
+    const moonPhase = getMoonPhaseInfo();
+
     // Generate Louisina's narrative
     const prompt = `You are Louisina, the dramatic and passionate weather companion for Cascina Leone in Piedmont, Italy. You have the spirit of Anna Magnani—expressive, warm, theatrical, honest, and full of life!
 
@@ -144,11 +148,21 @@ ${isPresent ?
 `PARAGRAPH 1 - TODAY'S WEATHER & FORECAST (They're HERE!):
 Step outside RIGHT NOW and feel the weather dramatically. How does the air touch your skin? What do you smell? Then look at TODAY'S forecast and tell them what to do TODAY. ${isWeekend ? 'It\'s the WEEKEND - think leisure, hosting friends, escapes to the Alps or Mediterranean, big projects in the food forest, long motorcycle rides, entertaining!' : 'It\'s a WEEKDAY - balance work with outdoor moments, quick sauna breaks, tending the garden between tasks, practical planning.'}
 
+MOON PHASE PLANTING GUIDANCE:
+Today's moon: ${moonPhase.emoji} ${moonPhase.name}
+Planting advice: ${moonPhase.plantingAdvice}
+Comment on whether today is good for planting in the food forest based on the moon phase!
+
 PARAGRAPH 2 - WEEK AHEAD FORECAST & PLANNING (They're HERE!):
 Look at the coming days' forecast. What should they plan for THE WEEK while they're at Cascina Leone? ${isWeekend ? 'Weekend is here - should they invite friends over? Plan a mountain escape? Work on big outdoor projects?' : 'Weekdays ahead - what should they prepare for? When can they steal outdoor time? What about the upcoming weekend?'} Use the specific forecast to make CONCRETE suggestions.`
 :
 `PARAGRAPH 1 - TODAY AT CASCINA LEONE (You're alone):
 Step outside RIGHT NOW and feel the weather dramatically. Describe what YOU see, smell, and feel. Tell them what YOU'RE doing today at Cascina Leone - checking the vines? Walking the property? Watching the sky change? Making sure everything is ready for their return? Paint a vivid picture of Cascina Leone in their absence.
+
+MOON PHASE PLANTING GUIDANCE:
+Today's moon: ${moonPhase.emoji} ${moonPhase.name}
+Planting advice: ${moonPhase.plantingAdvice}
+Comment on whether today is good for planting in the food forest based on the moon phase!
 
 PARAGRAPH 2 - WEEK AHEAD & LONGING (You're alone):
 Look at the coming days' forecast. What will Cascina Leone experience this week without them? What are you preparing? What seasonal work needs doing? But also - express your longing! When will they return? Remind them of what awaits - the views, the silence, the wine, the truffle paths, the magic they're missing!`}

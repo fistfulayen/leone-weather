@@ -17,6 +17,10 @@
       "schedule": "*/30 * * * *"
     },
     {
+      "path": "/api/fetch-city-weather",
+      "schedule": "0 * * * *"
+    },
+    {
       "path": "/api/daily-summary",
       "schedule": "0 1 * * *"
     },
