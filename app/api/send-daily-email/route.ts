@@ -6,8 +6,12 @@ import { getHeaderEmoji } from '@/lib/weather-emoji';
 import { getSunTimes } from '@/lib/sun-times';
 import { getRecentAQIComparisons, getAQILevel, generateAQIStory, getAQIHealthGuidance, calculateNowCastAQI } from '@/lib/air-quality';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    // Check if this is a preview request (for website display)
+    const { searchParams } = new URL(request.url);
+    const isPreview = searchParams.get('preview') === 'true';
+
     // Get current reading
     const { data: readings } = await supabaseAdmin
       .from('readings')
@@ -698,6 +702,16 @@ ${cryptoPunksSales && cryptoPunksSales.length > 0 ? `
 </body>
 </html>
     `;
+
+    // If preview mode, return HTML directly for website display
+    if (isPreview) {
+      return new Response(emailHtml, {
+        headers: {
+          'Content-Type': 'text/html',
+          'Cache-Control': 'no-store, max-age=0',
+        },
+      });
+    }
 
     // Send email via Resend
     const { data, error } = await resend.emails.send({
