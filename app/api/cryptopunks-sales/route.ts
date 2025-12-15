@@ -57,7 +57,7 @@ export async function GET() {
           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
           'Referer': 'https://artacle.io/'
         },
-        next: { revalidate: 3600 } // Cache for 1 hour
+        cache: 'no-store' // Don't cache - response is > 5MB
       });
 
       if (artacleResponse.ok) {

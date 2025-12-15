@@ -177,7 +177,9 @@ export async function GET(request: Request) {
       const baseUrl = process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
         : 'http://localhost:3000';
-      const punksResponse = await fetch(`${baseUrl}/api/cryptopunks-sales`);
+      const punksResponse = await fetch(`${baseUrl}/api/cryptopunks-sales`, {
+        cache: 'no-store' // Don't cache - data changes frequently
+      });
       if (punksResponse.ok) {
         const data = await punksResponse.json();
         if (data.sales && data.sales.length > 0) {
