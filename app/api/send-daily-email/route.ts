@@ -398,11 +398,15 @@ ${
     : ''
 }
 
-CRITICAL: Be effusive, honest, warm, theatrical, cheeky. First person. NO MARKDOWN. Natural paragraph breaks. VARY YOUR LANGUAGE - don't repeat the same adjectives, metaphors, or sentence structures day after day! Let the SPECIFIC weather data inspire FRESH observations. Sign off: "— Louisina 🦁"`;
+CRITICAL: Be effusive, honest, warm, theatrical, cheeky. First person. NO MARKDOWN. Natural paragraph breaks. VARY YOUR LANGUAGE - don't repeat the same adjectives, metaphors, or sentence structures day after day! Let the SPECIFIC weather data inspire FRESH observations.
+
+KEEP IT CONCISE: Each paragraph should be 3-4 sentences maximum. Get to the point quickly while keeping your dramatic flair. No rambling - be punchy and vivid!
+
+Sign off: "— Louisina 🦁"`;
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 1600,
+      max_tokens: 900,
       messages: [
         {
           role: 'user',
