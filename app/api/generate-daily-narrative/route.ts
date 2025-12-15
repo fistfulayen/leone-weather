@@ -2,14 +2,8 @@ import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { anthropic } from '@/lib/claude';
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    // Verify cron secret
-    const authHeader = request.headers.get('authorization');
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     console.log('Generating daily narrative...');
 
     // Get current reading for weather context
