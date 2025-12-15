@@ -144,119 +144,86 @@ export async function GET(request: Request) {
     console.log('Is present?', isPresent);
     console.log('======================');
 
-    // Get crypto prices with 24h change
+    // Get crypto prices from database (fetched by cron job)
     let cryptoPrices = null;
     try {
-      const cryptoResponse = await fetch(
-        'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true'
-      );
-      if (cryptoResponse.ok) {
-        const data = await cryptoResponse.json();
+      const { data: latestCrypto } = await supabaseAdmin
+        .from('crypto_prices')
+        .select('*')
+        .order('fetched_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (latestCrypto) {
         cryptoPrices = {
           bitcoin: {
-            price: data.bitcoin?.usd,
-            change: data.bitcoin?.usd_24h_change,
+            price: latestCrypto.bitcoin_price,
+            change: latestCrypto.bitcoin_change_24h,
           },
           ethereum: {
-            price: data.ethereum?.usd,
-            change: data.ethereum?.usd_24h_change,
+            price: latestCrypto.ethereum_price,
+            change: latestCrypto.ethereum_change_24h,
           },
           solana: {
-            price: data.solana?.usd,
-            change: data.solana?.usd_24h_change,
+            price: latestCrypto.solana_price,
+            change: latestCrypto.solana_change_24h,
           },
         };
+        console.log('Crypto prices loaded from database');
       }
     } catch (error) {
-      console.error('Error fetching crypto prices:', error);
+      console.error('Error loading crypto prices from database:', error);
     }
 
-    // Get NFT sales data from Artacle API (last 24 hours, > 0.5 ETH)
+    // Get NFT sales from database (fetched by cron job)
     let cryptoPunksSales = null;
     try {
-      // Use production URL directly if on Vercel, localhost otherwise
-      const baseUrl = process.env.VERCEL_ENV === 'production'
-        ? 'https://weather.altalanga.love'
-        : process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : 'http://localhost:3000';
+      const { data: nftSales } = await supabaseAdmin
+        .from('nft_sales')
+        .select('*')
+        .order('price_eth', { ascending: false });
 
-      console.log('=== NFT SALES FETCH DEBUG ===');
-      console.log('VERCEL_ENV:', process.env.VERCEL_ENV);
-      console.log('VERCEL_URL:', process.env.VERCEL_URL);
-      console.log('Base URL:', baseUrl);
-      console.log('Full URL:', `${baseUrl}/api/cryptopunks-sales`);
-
-      const punksResponse = await fetch(`${baseUrl}/api/cryptopunks-sales`, {
-        cache: 'no-store' // Don't cache - data changes frequently
-      });
-
-      console.log('NFT response status:', punksResponse.status);
-      console.log('NFT response ok:', punksResponse.ok);
-
-      if (punksResponse.ok) {
-        const data = await punksResponse.json();
-        console.log('NFT data received:', data);
-        console.log('NFT sales array length:', data.sales?.length);
-
-        if (data.sales && data.sales.length > 0) {
-          cryptoPunksSales = data.sales;
-          console.log('NFT sales found:', cryptoPunksSales.length);
-          console.log('First 3 sales:', cryptoPunksSales.slice(0, 3).map((s: any) => s.tokenName));
-        } else {
-          console.log('No NFT sales in response');
-        }
-      } else {
-        console.log('NFT response not OK');
+      if (nftSales && nftSales.length > 0) {
+        cryptoPunksSales = nftSales.map((sale: any) => ({
+          tokenName: sale.token_name,
+          collectionName: sale.collection_name,
+          collectionArtist: sale.collection_artist,
+          priceEth: sale.price_eth,
+          priceUsd: sale.price_usd,
+          imageUrl: sale.image_url,
+          platform: sale.platform,
+          timestamp: sale.sale_timestamp,
+          punkId: sale.token_id,
+          hoursAgo: sale.hours_ago,
+        }));
+        console.log('NFT sales loaded from database:', cryptoPunksSales.length);
       }
     } catch (error) {
-      console.error('Error fetching NFT sales:', error);
+      console.error('Error loading NFT sales from database:', error);
     }
-    console.log('=== END NFT SALES FETCH DEBUG ===');
 
-    // Get local news data
+    // Get local news from database (fetched by cron job)
     let localNews = null;
     try {
-      // Use production URL directly if on Vercel, localhost otherwise
-      const baseUrl = process.env.VERCEL_ENV === 'production'
-        ? 'https://weather.altalanga.love'
-        : process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : 'http://localhost:3000';
+      const { data: newsArticles } = await supabaseAdmin
+        .from('local_news_articles')
+        .select('*')
+        .order('pub_date', { ascending: false })
+        .limit(15);
 
-      console.log('=== LOCAL NEWS FETCH DEBUG ===');
-      console.log('VERCEL_ENV:', process.env.VERCEL_ENV);
-      console.log('VERCEL_URL:', process.env.VERCEL_URL);
-      console.log('Base URL:', baseUrl);
-      console.log('Full URL:', `${baseUrl}/api/local-news`);
-
-      const newsResponse = await fetch(`${baseUrl}/api/local-news`, {
-        cache: 'no-store'
-      });
-
-      console.log('News response status:', newsResponse.status);
-      console.log('News response ok:', newsResponse.ok);
-
-      if (newsResponse.ok) {
-        const newsData = await newsResponse.json();
-        console.log('News data received:', newsData);
-        console.log('News articles array length:', newsData.articles?.length);
-
-        if (newsData.articles && newsData.articles.length > 0) {
-          // Limit to top 10-15 articles
-          localNews = newsData.articles.slice(0, 15);
-          console.log(`Found ${localNews.length} news articles for email`);
-          console.log('First 3 articles:', localNews.slice(0, 3).map((a: any) => a.title));
-        } else {
-          console.log('No news articles in response');
-        }
-      } else {
-        console.log('News response not OK');
+      if (newsArticles && newsArticles.length > 0) {
+        localNews = newsArticles.map((article: any) => ({
+          title: article.title,
+          link: article.link,
+          pubDate: article.pub_date,
+          source: article.source,
+          villages: article.villages,
+        }));
+        console.log('Local news loaded from database:', localNews.length);
       }
     } catch (error) {
-      console.error('Error fetching local news:', error);
+      console.error('Error loading local news from database:', error);
     }
-    console.log('=== END LOCAL NEWS FETCH DEBUG ===');
 
     // Get daily painting from database (pre-generated by cron job)
     let dailyPainting = null;
