@@ -274,7 +274,7 @@ export async function GET(request: Request) {
         ).join('; '),
 
         // News headlines (top 3)
-        news: localNews?.slice(0, 3).map(article => article.title).join('; '),
+        news: localNews?.slice(0, 3).map((article: { title: string }) => article.title).join('; '),
 
         // Crypto prices
         cryptoPrices: cryptoPrices ? {
