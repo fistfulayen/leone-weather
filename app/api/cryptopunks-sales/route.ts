@@ -2,42 +2,44 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const punksResponse = await fetch('https://www.cryptopunks.app/cryptopunks/recents', {
+    // Fetch NFT sales data from Artacle API (last 24 hours)
+    const response = await fetch('https://artacle.io/api/agragate/index?period=1', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        'Referer': 'https://artacle.io/'
+      },
       next: { revalidate: 3600 } // Cache for 1 hour
     });
 
-    if (!punksResponse.ok) {
-      return NextResponse.json({ error: 'Failed to fetch CryptoPunks data' }, { status: 500 });
+    if (!response.ok) {
+      return NextResponse.json({ error: 'Failed to fetch NFT sales data' }, { status: 500 });
     }
 
-    const html = await punksResponse.text();
+    const data = await response.json();
 
-    // Parse HTML to extract sales data with more details
-    // More restrictive regex that doesn't cross punk boundaries
-    const salesPattern = /href="\/cryptopunks\/details\/(\d+)"[^<]*?<img[^>]*?>[^<]*?<\/a>[^<]*?<\/div>[^<]*?<div[^>]*?>[^<]*?<div>Bought for ([\d.]+) ETH \(\$([\d,]+(?:\.\d+)?)[^)]*\)<\/div><div>(\d+) hours? ago<\/div>/gi;
-
-    const sales: Array<{
-      punkId: string;
-      priceEth: number;
-      priceUsd: string;
-      hoursAgo: number;
-      imageUrl: string;
-    }> = [];
-    let match;
-
-    while ((match = salesPattern.exec(html)) !== null) {
-      const hoursAgo = parseInt(match[4]);
-      if (hoursAgo <= 24) {
-        const punkId = match[1];
-        sales.push({
-          punkId: punkId,
-          priceEth: parseFloat(match[2]),
-          priceUsd: match[3],
-          hoursAgo: hoursAgo,
-          imageUrl: `https://www.cryptopunks.app/images/cryptopunks/punk${punkId.padStart(4, '0')}.png`,
-        });
-      }
-    }
+    // Filter for sales > 0.5 ETH and map to our format
+    const sales = data.transactions
+      .filter((tx: any) => tx.valueETH > 0.5)
+      .map((tx: any) => ({
+        tokenName: tx.tokenName,
+        collectionName: tx.collectionName,
+        collectionArtist: tx.collectionArtist || 'Unknown Artist',
+        priceEth: tx.valueETH,
+        priceUsd: tx.valueUSD.toLocaleString('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }).replace('$', ''),
+        imageUrl: tx.imageUrl || tx.imageUrlCDN,
+        platform: tx.platform,
+        timestamp: new Date(tx.ts).toISOString(),
+        // Keep punkId for backwards compatibility (use token ID)
+        punkId: tx.token || tx.tokenName.match(/\d+/)?.[0] || '0',
+        // Calculate hours ago
+        hoursAgo: Math.floor((Date.now() - tx.ts) / (1000 * 60 * 60))
+      }))
+      .slice(0, 10); // Limit to top 10
 
     if (sales.length === 0) {
       return NextResponse.json({ sales: null });
@@ -45,7 +47,7 @@ export async function GET() {
 
     return NextResponse.json({ sales });
   } catch (error) {
-    console.error('Error fetching CryptoPunks sales:', error);
-    return NextResponse.json({ error: 'Failed to fetch CryptoPunks sales' }, { status: 500 });
+    console.error('Error fetching NFT sales:', error);
+    return NextResponse.json({ error: 'Failed to fetch NFT sales' }, { status: 500 });
   }
 }

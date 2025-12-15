@@ -87,7 +87,7 @@ export async function GET(request: Request) {
       console.error('Error fetching crypto prices:', error);
     }
 
-    // Get CryptoPunks sales
+    // Get NFT sales from Artacle API (last 24 hours, > 0.5 ETH)
     let cryptoPunksSales = null;
     try {
       const punksResponse = await fetch(`${baseUrl}/api/cryptopunks-sales`);
@@ -98,7 +98,7 @@ export async function GET(request: Request) {
         }
       }
     } catch (error) {
-      console.error('Error fetching CryptoPunks sales:', error);
+      console.error('Error fetching NFT sales:', error);
     }
 
     // Helper functions
@@ -118,7 +118,6 @@ export async function GET(request: Request) {
       return 'night';
     };
 
-    const now = new Date();
     const timeOfDay = getTimeOfDay(now);
 
     // Build full context for the painting
@@ -144,8 +143,8 @@ export async function GET(request: Request) {
         bitcoin: cryptoPrices.bitcoin,
         ethereum: cryptoPrices.ethereum,
       } : null,
-      cryptoPunks: cryptoPunksSales?.map((punk: any) =>
-        `Punk #${punk.punkId} sold for ${punk.priceEth} ETH ($${punk.priceUsd})`
+      nftSales: cryptoPunksSales?.map((sale: any) =>
+        `${sale.tokenName} by ${sale.collectionArtist} sold for ${sale.priceEth} ETH ($${sale.priceUsd})`
       ).join('; '),
     };
 

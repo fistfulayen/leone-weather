@@ -171,51 +171,22 @@ export async function GET(request: Request) {
       console.error('Error fetching crypto prices:', error);
     }
 
-    // Get CryptoPunks sales data from last 24 hours
+    // Get NFT sales data from Artacle API (last 24 hours, > 0.5 ETH)
     let cryptoPunksSales = null;
     try {
-      const punksResponse = await fetch('https://www.cryptopunks.app/cryptopunks/recents');
+      const baseUrl = process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : 'http://localhost:3000';
+      const punksResponse = await fetch(`${baseUrl}/api/cryptopunks-sales`);
       if (punksResponse.ok) {
-        const html = await punksResponse.text();
-
-        // Parse HTML to extract sales data with full details
-        // More restrictive regex that doesn't cross punk boundaries
-        const salesPattern = /href="\/cryptopunks\/details\/(\d+)"[^<]*?<img[^>]*?>[^<]*?<\/a>[^<]*?<\/div>[^<]*?<div[^>]*?>[^<]*?<div>Bought for ([\d.]+) ETH \(\$([\d,]+(?:\.\d+)?)[^)]*\)<\/div><div>(\d+) hours? ago<\/div>/gi;
-
-        const sales: Array<{
-          punkId: string;
-          priceEth: number;
-          priceUsd: string;
-          hoursAgo: number;
-          imageUrl: string;
-        }> = [];
-        let match;
-
-        while ((match = salesPattern.exec(html)) !== null) {
-          const hoursAgo = parseInt(match[4]);
-          if (hoursAgo <= 24) {
-            const punkId = match[1];
-            sales.push({
-              punkId: punkId,
-              priceEth: parseFloat(match[2]),
-              priceUsd: match[3],
-              hoursAgo: hoursAgo,
-              imageUrl: `https://www.cryptopunks.app/images/cryptopunks/punk${punkId.padStart(4, '0')}.png`,
-            });
-          }
-        }
-
-        console.log('CryptoPunks sales found:', sales.length);
-
-        if (sales.length > 0) {
-          cryptoPunksSales = sales;
-          console.log('CryptoPunks data prepared:', cryptoPunksSales);
-        } else {
-          console.log('No CryptoPunks sales in last 24 hours');
+        const data = await punksResponse.json();
+        if (data.sales && data.sales.length > 0) {
+          cryptoPunksSales = data.sales;
+          console.log('NFT sales found:', cryptoPunksSales.length);
         }
       }
     } catch (error) {
-      console.error('Error fetching CryptoPunks sales:', error);
+      console.error('Error fetching NFT sales:', error);
     }
 
     // Get local news data
@@ -700,22 +671,28 @@ ${localNews && localNews.length > 0 ? `
 
 ${cryptoPunksSales && cryptoPunksSales.length > 0 ? `
   <div style="background: #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #e5e7eb;">
-    <h2 style="font-size: 24px; margin: 0 0 20px 0; color: #111827;">🔷 CryptoPunks Last 24 Hours (${cryptoPunksSales.length} ${cryptoPunksSales.length === 1 ? 'Sale' : 'Sales'})</h2>
+    <h2 style="font-size: 24px; margin: 0 0 20px 0; color: #111827;">🎨 Notable NFT Sales (Last 24 Hours, ${cryptoPunksSales.length} ${cryptoPunksSales.length === 1 ? 'Sale' : 'Sales'} > 0.5 ETH)</h2>
     ${cryptoPunksSales.map((sale: any) => `
       <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 12px;">
         <img
           src="${sale.imageUrl}"
-          alt="Punk ${sale.punkId}"
+          alt="${sale.tokenName}"
           width="96"
           height="96"
-          style="border-radius: 4px; image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;"
+          style="border-radius: 4px; object-fit: cover;"
         />
         <div style="flex: 1;">
-          <p style="font-size: 18px; font-weight: 600; color: #111827; margin: 0 0 8px 0;">
-            Punk #${sale.punkId} bought for ${sale.priceEth} ETH ($${sale.priceUsd} USD)
+          <p style="font-size: 18px; font-weight: 600; color: #111827; margin: 0 0 4px 0;">
+            ${sale.tokenName}
           </p>
-          <p style="font-size: 14px; color: #6b7280; margin: 0;">
-            ${sale.hoursAgo} hours ago
+          <p style="font-size: 14px; color: #6b7280; margin: 0 0 8px 0;">
+            ${sale.collectionName} by ${sale.collectionArtist}
+          </p>
+          <p style="font-size: 16px; font-weight: 500; color: #059669; margin: 0 0 4px 0;">
+            ${sale.priceEth} ETH ($${sale.priceUsd} USD)
+          </p>
+          <p style="font-size: 14px; color: #9ca3af; margin: 0;">
+            ${sale.hoursAgo} hours ago · ${sale.platform}
           </p>
         </div>
       </div>
