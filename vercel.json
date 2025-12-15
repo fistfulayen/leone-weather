@@ -30,11 +30,15 @@
     },
     {
       "path": "/api/fetch-horoscope",
-      "schedule": "0 4 * * *"
+      "schedule": "45 5 * * *"
     },
     {
       "path": "/api/cron/generate-daily-painting",
-      "schedule": "0 5 * * *"
+      "schedule": "45 5 * * *"
+    },
+    {
+      "path": "/api/generate-daily-narrative",
+      "schedule": "45 5 * * *"
     },
     {
       "path": "/api/send-daily-email",
