@@ -13,7 +13,8 @@ export async function GET() {
     const html = await punksResponse.text();
 
     // Parse HTML to extract sales data with more details
-    const salesPattern = /href="\/cryptopunks\/details\/(\d+)"[\s\S]*?Bought for ([\d.]+) ETH \(\$([\d,]+(?:\.\d+)?)[^)]*\)[\s\S]*?<div>(\d+) hours? ago<\/div>/gi;
+    // More restrictive regex that doesn't cross punk boundaries
+    const salesPattern = /href="\/cryptopunks\/details\/(\d+)"[^<]*?<img[^>]*?>[^<]*?<\/a>[^<]*?<\/div>[^<]*?<div[^>]*?>[^<]*?<div>Bought for ([\d.]+) ETH \(\$([\d,]+(?:\.\d+)?)[^)]*\)<\/div><div>(\d+) hours? ago<\/div>/gi;
 
     const sales: Array<{
       punkId: string;
