@@ -1,75 +1,124 @@
 # 🦁 Cascina Leone Weather Station
 
-Your personal weather companion for Cascina Leone in beautiful Piedmont, Italy. Featuring **Louisina**, your dramatic weather narrator with the spirit of Anna Magnani!
+*Buongiorno, darlings!* Welcome to your personal weather sanctuary in the heart of Piedmont's Alta Langa! I am **Louisina**, your dramatic weather companion with the soul of Anna Magnani, here to transform cold numbers into passionate stories!
 
-## ✨ What is This?
+## ✨ What Magic Happens Here?
 
-A Next.js weather dashboard that transforms raw data from your Davis Weatherlink station into beautiful, actionable insights with personality. Every morning, wake up to:
+Every dawn at Cascina Leone, this Next.js marvel awakens to weave weather data into art! Picture this:
 
-- **🌡️ Real-time weather dashboard** - Current conditions, today's high/low, wind, rain, pressure
-- **🌬️ Air quality monitoring** - AQI with global comparisons (Milan, Paris, London, LA, Shanghai, etc.)
-- **🦁 Louisina's Weather Report** - Your dramatic AI weather companion who:
-  - Shares her sensory experience of stepping outside RIGHT NOW
-  - Gives lifestyle advice for Cascina Leone (food forest, truffles, wooden half pipe skating, sauna, etc.)
-  - Recommends what to cook and who should cook it (based on weather AND her mood about gender roles!)
-  - Teaches you about **local Piedmont wines** from small producers
-  - Delivers Hedvig's personalized **Pisces horoscope** with life wisdom
-- **📧 Daily weather emails** - Beautiful HTML emails every morning at 6-7 AM Italy time
-- **💬 Ask Louisina** - Chat interface for quick weather questions
+### 🌡️ **Real-Time Weather Dashboard**
+Step outside with me RIGHT NOW! Feel the air on your skin, smell the fog rolling through the valley, watch the barometric pressure dance like a temperamental lover. Current conditions, today's high and low, wind speed, rain—all delivered with theatrical flair!
 
-Built with Next.js, TypeScript, Tailwind CSS, Supabase, Claude, and Resend.
+### 💨 **Air Quality Monitoring**
+Breathe, my loves! I compare Cascina Leone's pristine mountain air to:
+- 🇮🇹 Italian cities (Milan, Turin, Genoa, Rome)
+- 🇪🇪 Tallinn (for Hedvig's Estonian heart!)
+- 🇫🇷 Paris, 🇬🇧 London, 🇩🇪 Berlin, 🇪🇸 Barcelona
+- 🇺🇸 Los Angeles, New York
+- 🇨🇳 Shanghai
 
-## 🎭 Meet Louisina
+Watch your air quality percentile climb! You're breathing air cleaner than 80% of the world!
 
-Louisina is your weather companion with the dramatic flair of Italian actress **Anna Magnani**! She has the spirit of:
-- Over-the-top theatrical weather commentary
-- Warm, loving, passionate storytelling
-- Italian expressions (Mamma mia! Bellissimo! Madonna!)
-- Expert knowledge of Piedmont wines
+### 🎨 **Daily Artistic Vista**
+Every morning, a different classical master reimagines Cascina Leone! Today Monet, tomorrow Cézanne, next week Caravaggio paints your hills in dramatic chiaroscuro. Each day brings a fresh perspective from history's greatest painters!
 
-### What Makes Louisina Special:
+### 💰 **Financial Pulse**
+Track your crypto fortune alongside the weather:
+- ₿ Bitcoin
+- Ξ Ethereum
+- ◎ Solana
 
-**🍷 Wine Expert**: Each day, Louisina teaches you about a different local wine producer:
-- Dogliani Dolcetto (Valdibà, Pecchenino, San Fereolo)
-- Alta Langa Sparkling (Marcalberto, Ca' d'Gal)
-- Barolo (Bartolo Mascarello, Giuseppe Rinaldi, G.D. Vajra, Cavallotto, Burlotto)
-- Barbaresco (Roagna, Sottimano)
-- Barbera d'Asti (Braida)
-- Roero (Matteo Correggia, Malvirà)
+Watch the numbers dance! Green arrows up, red arrows down—more dramatic than any opera!
 
-She pairs wines with meals and weather, sharing tasting notes, producer stories, and whether they're organic/biodynamic!
+### 🎨 **NFT Art Market**
+For the collectors and rebels! Track high-value sales in the last 24 hours:
+- **CryptoPunks** (those pixelated pioneers!)
+- **Notable NFT sales** > 0.5 ETH from across the digital art world
 
-**🌟 Hedvig's Horoscope**: Personalized for Hedvig Maigre (Pisces, Feb 28, 1979):
-- Former Dior "etalon" (fitting model) → truffle farmer
-- "Stay Punk" philosophy from Communist Estonian upbringing
-- Oscillates between Paris elegance and Piemonte soil work
-- Emotional art collector, mother to Niina, madly in love with Ian Rogers
-- Hates conformity, loves being the standard (etalon)
+See what's selling, what the market whispers. Stay punk, stay informed!
 
-**🍽️ Meal Suggestions**: Based on weather, Louisina recommends:
-- **Hedvig can cook**: Homemade Plin with butter or sage, meats from Niella Belbo butcher, wild boar from neighbor Matteo
-- **Ian can cook**: Hummus, his mom's apple crisp, kale salad, pasta with pesto, Totino's Frozen Pizza
-- **Going out**: Green Cafe (practice Italian!), Nonno Grillo (family-style), Drougerie in Bosolasco (splurge!)
+### 📰 **Alta Langa Local News**
+Your village gossip, delivered fresh! I scan Italian news sources for mentions of:
+- Alba, Barolo, La Morra, Dogliani, Monforte
+- All 100+ villages of your beloved Alta Langa
+- What's happening in Niella Belbo, your truffle-hunting grounds
 
-She chooses who should cook based on the weather AND how she's feeling about gender roles that day!
+Real news about real neighbors, not algorithmic noise from afar!
 
-## 🚀 Quick Start
+### ⏳ **Alta Langa Love Countdown**
+**9️⃣ 1️⃣ 2️⃣** days until the party of the century! July 16, 2027—mark your calendars! Watch the vintage emoji counter tick down daily!
+
+### 🦁 **Louisina's Weather Report**
+*This* is where I truly come alive! Every day at 5:45 AM UTC, I compose your personalized weather narrative:
+
+**PARAGRAPH 1** - Step outside RIGHT NOW! What does the morning air whisper? How do the clouds move? What should you DO today with this weather?
+
+**PARAGRAPH 2** - The week ahead! Should you invite friends? Plan a mountain escape? Tend the food forest? Work on the wooden half pipe? I read the forecast like tarot cards!
+
+**PARAGRAPH 3** - Tonight's dinner and wine lesson! Who cooks?
+- **Hedvig**: Homemade plin with butter & sage, meats from Niella Belbo butcher, Matteo's wild boar
+- **Ian**: Hummus, his mother's apple crisp, kale salad, pesto, Totino's pizza (yes, frozen!)
+- **Going out**: Green Cafe for Italian practice, Nonno Grillo for family feasts, Drougerie for decadence!
+
+Then comes the WINE EDUCATION! Each day I teach you about ONE local producer:
+- Their story, their philosophy (organic? biodynamic? rebel winemaker?)
+- Specific wine name, grape variety, terroir
+- Tasting notes that make your mouth water
+- Perfect pairing with tonight's meal AND weather
+
+**PARAGRAPH 4** - Hedvig's Pisces horoscope! I weave astrology with weather, connecting cosmic energy to:
+- Your Pisces-Virgo love (emotional depth meets practical devotion)
+- Hedvig's beautiful duality: high fashion elegance dancing with earthy truffle hunting
+- Her "Stay Punk" rebellious spirit and fierce Estonian independence
+- Love, Niina, yoga, meditation, running, food forest dreams
+- A woman who sets her own standards—elegant yet wild, refined yet rebellious!
+
+### 📧 **Daily Weather Emails**
+Every morning at 7:00 AM CET (6:00 UTC), I send you beauty in HTML:
+- Current weather with all the drama
+- Today's painting in a classical master's style
+- Full forecast for the week
+- Air quality comparisons
+- Crypto prices
+- NFT sales
+- Local Alta Langa news
+- My complete narrative with wine education and horoscope
+- All delivered to `hedvigmaigre@me.com` and `fistfulayen@gmail.com`
+
+### 💬 **Ask Louisina Anything**
+Chat with me! Ask about:
+- "Good day for truffle hunting?"
+- "Should I air out the house?"
+- "What wine pairs with wild boar?"
+- "Is pressure rising or falling?"
+- "When's the next full moon?"
+
+I remember our conversations, building context like a good friend!
+
+## 🎭 About Louisina (That's Me!)
+
+I have the spirit of **Anna Magnani**—the greatest Italian actress who ever lived! Theatrical, warm, passionate, honest, full of life!
+
+I know Piedmont wines like the back of my hand:
+- **Dogliani Dolcetto**: Valdibà, Pecchenino, San Fereolo
+- **Alta Langa & Moscato**: Marcalberto, Ca' d'Gal, Paolo Saracco
+- **Barolo**: Bartolo Mascarello, Giuseppe Rinaldi, G.D. Vajra, Cavallotto, Burlotto
+- **Barbaresco**: Roagna, Sottimano
+- **Barbera d'Asti**: Braida
+- **Roero**: Matteo Correggia, Malvirà
+
+Each day I rotate through 20+ producers, teaching you their stories, their terroir, their souls in a bottle!
+
+## 🚀 Quick Start (For the Technical Minds)
 
 ### 1. Database Setup
 
-**Go to your Supabase project:**
-1. Open https://supabase.com/dashboard/project/ypshbbjaftctktvmmvsx
-2. Navigate to **SQL Editor**
-3. Open the file `supabase-schema.sql` from this project
-4. Copy and paste the entire contents into the SQL Editor
-5. Click **Run** to create all tables
-
-This creates:
-- `readings` - Weather data every 15 minutes
-- `daily_summaries` - Daily statistics
-- `conversations` - Chat history with Louisina
-- `aqi_comparisons` - Air quality comparisons
-- `seasonal_baselines` - Historical normals
+Open your Supabase project and run ALL migration files in `supabase/migrations/`:
+- Weather readings table
+- Daily summaries, conversations, AQI comparisons
+- Crypto prices, NFT sales, local news
+- Daily paintings, narratives, horoscopes
+- Weather forecasts and overviews
 
 ### 2. Install Dependencies
 
@@ -79,303 +128,280 @@ npm install
 
 ### 3. Environment Variables
 
-Create `.env.local` with:
+Create `.env.local`:
 
 ```env
 # Weatherlink API
-WEATHERLINK_API_KEY=your_weatherlink_api_key
-WEATHERLINK_API_SECRET=your_weatherlink_api_secret
-WEATHERLINK_STATION_ID=your_station_id
+WEATHERLINK_API_KEY=your_key
+WEATHERLINK_API_SECRET=your_secret
+WEATHERLINK_STATION_ID=your_station
 
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_publishable_key
 SUPABASE_SECRET_KEY=your_secret_key
 
-# Anthropic (for Louisina)
-ANTHROPIC_API_KEY=your_anthropic_api_key
+# Anthropic (for me, Louisina!)
+ANTHROPIC_API_KEY=your_anthropic_key
+
+# OpenAI (for daily paintings)
+OPENAI_API_KEY=your_openai_key
 
 # World Air Quality Index
 WAQI_API_TOKEN=your_waqi_token
 
-# Resend (for daily emails)
-RESEND_API_KEY=your_resend_api_key
+# Resend (for emails)
+RESEND_API_KEY=your_resend_key
 ```
 
-### 4. Start Development Server
+### 4. Start Development
 
 ```bash
 npm run dev
 ```
 
-Visit **http://localhost:3000**
+Visit **http://localhost:3000** and meet me!
 
-### 5. Fetch Initial Data
+### 5. Initial Data Fetch
 
 ```bash
+# Fetch weather
 curl http://localhost:3000/api/ingest-weather
-```
 
-## 📧 Daily Email Setup
+# Fetch crypto prices
+curl http://localhost:3000/api/fetch-crypto-prices
 
-Louisina sends beautiful daily weather emails every morning!
+# Fetch NFT sales
+curl http://localhost:3000/api/fetch-nft-sales
 
-### Setup Steps:
+# Fetch local news
+curl http://localhost:3000/api/fetch-local-news
 
-1. **Sign up for Resend**
-   - Go to [resend.com](https://resend.com)
-   - Free tier: 3,000 emails/month
+# Generate my narrative
+curl http://localhost:3000/api/generate-daily-narrative
 
-2. **Verify your domain** (e.g., altalanga.love)
-   - Add DNS records from Resend dashboard
-   - Email will come from: `weather@altalanga.love`
-
-3. **Get API key**
-   - Copy from Resend dashboard
-   - Add to `.env.local`: `RESEND_API_KEY=your_key`
-
-4. **For production (Vercel)**
-   - Add `RESEND_API_KEY` to Vercel environment variables
-   - Redeploy
-
-5. **Recipients**
-   - Currently set to: `hedvigmaigre@me.com` and `fistfulayen@gmail.com`
-   - Change in `app/api/send-daily-email/route.ts` if needed
-
-### What's in the Email:
-
-- 🌡️ Current weather stats (temp, feels like, humidity)
-- 📊 Today's high/low, wind, rain, pressure
-- 🦁 Louisina's full dramatic narrative:
-  - Sensory weather experience
-  - Lifestyle advice for Cascina Leone
-  - Meal & wine pairing with local producer education
-  - Hedvig's personalized horoscope
-
-Emails are sent daily at **5:00 UTC** (6-7 AM Italy time) via Vercel cron job.
-
-## 📁 Project Structure
-
-```
-leone-weather/
-├── app/
-│   ├── api/
-│   │   ├── current/              # Current weather
-│   │   ├── air-quality/          # AQI + comparisons
-│   │   ├── louisina-narrative/   # Louisina's daily report
-│   │   ├── chat/                 # Chat with Louisina
-│   │   ├── send-daily-email/     # Daily email cron
-│   │   ├── ingest-weather/       # Fetch from Weatherlink (every 15 min)
-│   │   └── daily-summary/        # Compute daily stats (1 AM)
-│   ├── page.tsx                  # Main dashboard
-│   └── globals.css               # Styles
-├── components/
-│   ├── CurrentWeather.tsx        # Weather card
-│   ├── AirQualityCard.tsx        # AQI display
-│   ├── TodaySummary.tsx          # Today's stats
-│   ├── LeoneNarrative.tsx        # Louisina's report
-│   └── ChatInterface.tsx         # Ask Louisina
-├── lib/
-│   ├── supabase.ts               # Database client
-│   ├── weatherlink.ts            # Weatherlink API
-│   ├── air-quality.ts            # AQI fetching
-│   ├── claude.ts                 # Louisina's personality
-│   ├── insights.ts               # Weather insights
-│   ├── weather-emoji.ts          # Dynamic emoji (sun/moon)
-│   ├── sun-times.ts              # Sunrise/sunset
-│   ├── wine-knowledge.ts         # Piedmont wine database
-│   └── resend.ts                 # Email client
-├── vercel.json                   # Cron jobs config
-└── .env.local                    # Environment variables
+# Generate today's painting
+curl http://localhost:3000/api/cron/generate-daily-painting
 ```
 
 ## 🌙 Dynamic Weather Emoji
 
-The header emoji changes based on time and weather:
+The header changes like a mood ring!
 
 **Daytime** (sunrise to sunset):
-- ☀️ Sunny - clear skies
-- ⛅ Partly cloudy - moderate humidity
-- ☁️ Cloudy - high humidity
+- ☀️ Clear skies
+- ⛅ Partly cloudy
+- ☁️ Overcast
 - 🌦️ Light rain
-- 🌧️ Moderate rain
-- ⛈️ Heavy rain/storm
+- 🌧️ Steady rain
+- ⛈️ Storms!
 
 **Nighttime** (sunset to sunrise):
-- 🌑 New moon
-- 🌒 Waxing crescent
-- 🌓 First quarter
-- 🌔 Waxing gibbous
-- 🌕 Full moon
-- 🌖 Waning gibbous
-- 🌗 Last quarter
-- 🌘 Waning crescent
+- 🌑 New moon through 🌕 Full moon through 🌘 Waning crescent
+- Real astronomical calculations, not approximations!
 
-Moon phase calculated using astronomical algorithms!
+## ⏰ Automated Schedule
 
-## 📊 API Endpoints
+Everything runs like clockwork (UTC timezone):
 
-### `GET /api/current`
-Current weather with insights, sunrise/sunset, today's high/low.
+**Every 15 minutes:**
+- Weather data from Davis Weatherlink
+- Crypto prices (Bitcoin, Ethereum, Solana)
+- NFT sales (CryptoPunks + Artacle)
 
-### `GET /api/air-quality`
-AQI with global city comparisons and narrative.
+**Every 30 minutes:**
+- Local Alta Langa news
 
-### `GET /api/louisina-narrative`
-Louisina's complete weather report (cached 5 min).
+**Every 6 hours (5:30, 11:30, 17:30, 23:30):**
+- Weather forecasts
+- Weather overviews
 
-### `POST /api/chat`
-Chat with Louisina:
-```json
-{
-  "message": "Is it a good day for the sauna?",
-  "sessionId": "session_123"
-}
-```
+**Daily at 1:00 UTC:**
+- Compute daily statistics
 
-### `GET /api/ingest-weather`
-Fetch from Weatherlink. Runs every 15 minutes via cron.
+**Daily at 5:45 UTC (6:45 CET):**
+- Generate daily painting
+- Fetch horoscope
+- Generate Louisina's narrative
 
-### `GET /api/daily-summary`
-Compute daily stats. Runs at 1 AM daily via cron.
+**Daily at 6:00 UTC (7:00 CET):**
+- Send morning email with all the glory!
 
-### `GET /api/send-daily-email`
-Send daily weather email. Runs at 5 AM UTC via cron.
+## 📊 Performance Optimization
+
+*Listen, darlings!* This system is FAST! Here's why:
+
+**Database Caching**: All expensive API calls (crypto, NFT, news, air quality) run on schedules and store results in Supabase. The email page loads in **under 2 seconds** instead of 30+!
+
+**Narrative Pre-Generation**: My daily story is written once at 5:45 AM and cached. No waiting for AI on every page load!
+
+**Smart Deduplication**: NFT sales are refreshed completely each fetch to avoid timestamp drift duplicates.
+
+## 🍷 Wine Knowledge
+
+I rotate through **20+ Piedmont producers**, teaching you:
+
+**What you learn:**
+- Producer story and philosophy
+- Organic/biodynamic/natural methods
+- Specific wine name and grape variety
+- Detailed tasting notes (aromas, flavors, structure, finish)
+- Perfect pairing with weather + meal
+
+**Example:**
+> "Tonight, Pecchenino's Sirì d'Jermu Dogliani Superiore! This organic Dolcetto bursts with blackberries and wild cherries. Twelve months in large oak casks give it sweet, velvety tannins. Perfect with Matteo's wild boar as the autumn chill sets in!"
+
+## 🎨 Daily Painting Masters
+
+Each morning, a different painter reimagines Cascina Leone:
+
+- Claude Monet's impressionist dawn mists
+- Paul Cézanne's geometric hills
+- Vincent van Gogh's swirling Piedmont skies
+- Caravaggio's dramatic light and shadow
+- J.M.W. Turner's atmospheric weather
+- Camille Pissarro's village scenes
+- And 35+ more masters!
+
+DALL-E 3 generates each painting in the style of the chosen master, using real weather data from that morning!
 
 ## 🚀 Deploying to Vercel
 
 ### 1. Push to GitHub
 
 ```bash
-git init
-git add .
-git commit -m "Initial commit - Cascina Leone Weather"
-git remote add origin https://github.com/YOUR_USERNAME/leone-weather.git
-git branch -M main
-git push -u origin main
+git push origin main
 ```
 
 ### 2. Deploy to Vercel
 
 ```bash
-vercel
+vercel --prod
 ```
 
-### 3. Add Environment Variables in Vercel
+### 3. Add Environment Variables
 
-Go to project settings → Environment Variables and add all from `.env.local`:
-- WEATHERLINK_API_KEY
-- WEATHERLINK_API_SECRET
-- WEATHERLINK_STATION_ID
-- NEXT_PUBLIC_SUPABASE_URL
-- NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-- SUPABASE_SECRET_KEY
-- ANTHROPIC_API_KEY
-- WAQI_API_TOKEN
-- RESEND_API_KEY
+In Vercel dashboard, add all keys from `.env.local`
 
-### 4. Cron Jobs
+### 4. Cron Jobs Activate!
 
-`vercel.json` configures:
-- Weather ingestion: Every 15 minutes
-- Daily summary: 1 AM UTC (2-3 AM Italy time)
-- Daily email: 5 AM UTC (6-7 AM Italy time)
+The `vercel.json` configuration activates automatically. Watch the logs to see me come alive!
 
-Activates automatically on deploy!
+## 📁 Project Architecture
 
-## 💬 Try Asking Louisina
+```
+leone-weather/
+├── app/
+│   ├── api/
+│   │   ├── ingest-weather/           # Every 15 min
+│   │   ├── fetch-crypto-prices/      # Every 15 min
+│   │   ├── fetch-nft-sales/          # Every 15 min
+│   │   ├── fetch-local-news/         # Every 30 min
+│   │   ├── fetch-forecast/           # Every 6 hours
+│   │   ├── fetch-weather-overview/   # Every 6 hours
+│   │   ├── fetch-horoscope/          # Daily 5:45 UTC
+│   │   ├── cron/generate-daily-painting/  # Daily 5:45 UTC
+│   │   ├── generate-daily-narrative/ # Daily 5:45 UTC
+│   │   ├── send-daily-email/         # Daily 6:00 UTC
+│   │   ├── daily-summary/            # Daily 1:00 UTC
+│   │   ├── test-narrative/           # Debug endpoint
+│   │   └── chat/                     # Chat with me!
+│   └── page.tsx                      # Main dashboard
+├── lib/
+│   ├── supabase.ts                   # Database magic
+│   ├── weatherlink.ts                # Davis API
+│   ├── air-quality.ts                # AQI + comparisons
+│   ├── claude.ts                     # My personality!
+│   ├── openai.ts                     # Painting generation
+│   ├── wine-knowledge.ts             # Piedmont wisdom
+│   ├── sun-times.ts                  # Astronomy
+│   └── resend.ts                     # Email delivery
+└── vercel.json                       # Cron schedules
+```
 
-- "Is it a good day to air out the house?"
-- "Should I hang laundry outside?"
-- "What wine pairs with wild boar?"
-- "Good day for truffle hunting?"
-- "Is the pressure rising or falling?"
-- "How's the air quality compared to Milan?"
+## 🛠️ Tech Stack
 
-## 🍷 Wine Education
-
-Louisina rotates through **20+ local Piedmont producers**, teaching you about:
-
-**Regions covered:**
-- Dogliani (Dolcetto)
-- Alta Langa (Sparkling & Moscato)
-- Barolo (Nebbiolo)
-- Barbaresco (Nebbiolo)
-- Barbera d'Asti
-- Roero (Nebbiolo & Arneis)
-
-Each recommendation includes:
-- Producer story and philosophy
-- Organic/biodynamic/natural status
-- Specific wine name and grape
-- Tasting notes (aromas, flavors, structure)
-- Why it pairs with today's weather and meal
-
-Example:
-> "Today calls for Pecchenino's Sirì d'Jermu Dogliani Superiore! This organic Dolcetto from the Pecchenino family boasts intense blackberries, currants and black cherries. Twelve months in large oak casks add smooth, sweet tannins. Perfect with Matteo's wild boar on this chilly evening!"
+- **Framework:** Next.js 15 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Database:** Supabase (PostgreSQL)
+- **AI Narrative:** Anthropic Claude Sonnet 4.5
+- **AI Painting:** OpenAI DALL-E 3
+- **Weather:** Davis Weatherlink v2 API
+- **Air Quality:** World Air Quality Index
+- **Crypto:** CoinGecko API
+- **NFT Data:** CryptoPunks scraping + Artacle API
+- **News:** RSS parsing (IdeaWebTV, ANSA Piemonte)
+- **Horoscope:** ProKerala API
+- **Email:** Resend
+- **Hosting:** Vercel (with cron jobs)
+- **Astronomy:** SunCalc
 
 ## 🎨 Customization
 
 ### Change Email Recipients
 Edit `app/api/send-daily-email/route.ts`:
 ```typescript
-to: ['your@email.com', 'another@email.com']
+to: ['your@email.com']
 ```
 
-### Adjust Louisina's Personality
-Edit `app/api/louisina-narrative/route.ts` → the prompt
+### Adjust My Personality
+Edit `app/api/generate-daily-narrative/route.ts` — the prompt is my soul!
 
-### Add More Wine Producers
-Edit `lib/wine-knowledge.ts` → add to regions
+### Add Wine Producers
+Edit `lib/wine-knowledge.ts` — teach me new bottles!
 
 ### Change Email Time
-Edit `vercel.json` cron schedule (UTC timezone)
+Edit `vercel.json` cron schedules (UTC timezone)
 
 ## 🆘 Troubleshooting
 
-### Louisina not showing / "Failed to generate narrative"
-- Check Anthropic API key is set
-- Ensure you have credits in your Anthropic account
-- Check dev console for errors
+### "No narrative found"
+- Check `ANTHROPIC_API_KEY` in environment variables
+- Run manually: `curl /api/generate-daily-narrative`
+- Check Anthropic account credits
 
-### Email not sending
-- Verify RESEND_API_KEY in Vercel env vars
-- Check domain is verified in Resend dashboard
-- Look at Vercel function logs
+### Emails not arriving
+- Verify `RESEND_API_KEY` in Vercel
+- Check domain verification in Resend dashboard
+- View Vercel function logs
+
+### Crypto prices not updating
+- Check `COINGECKO_API_KEY` if using paid tier
+- Free tier has rate limits
+- View cron job logs in Vercel
+
+### NFT sales showing duplicates
+- Fixed! Table is now cleared before each fetch
+- Check cron job is running every 15 minutes
 
 ### Database errors
-- Run `supabase-schema.sql` in Supabase SQL Editor
-- Check Supabase keys in `.env.local`
+- Run ALL migration files in `supabase/migrations/`
+- Check Supabase keys match your project
+- Verify Row Level Security policies
 
-### Moon phase wrong
-- Moon calculation uses known new moon: Jan 11, 2024
-- Updates automatically for any date
+## 🎭 Credits & Love
 
-## 📚 Tech Stack
+Built with passion for **Hedvig Maigre** and **Ian Rogers** at Cascina Leone in the Alta Langa.
 
-- **Framework:** Next.js 15 (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **Database:** Supabase (PostgreSQL)
-- **AI:** Anthropic Claude Sonnet 4.5
-- **Weather:** Davis Weatherlink v2 API
-- **Air Quality:** World Air Quality Index API
-- **Email:** Resend
-- **Hosting:** Vercel (with cron jobs)
-- **Astronomy:** SunCalc (sunrise/sunset/moon phase)
+**Data sources:**
+- Weather: Davis Weatherlink
+- Air quality: World Air Quality Index Project
+- Crypto: CoinGecko
+- NFT: CryptoPunks.app + Artacle
+- News: IdeaWebTV, ANSA Piemonte
+- Horoscope: ProKerala
+- Wine knowledge: Compiled from local Piedmont producers
 
-## 🎭 Credits
+**Technology:**
+- Louisina powered by Anthropic's Claude Sonnet 4.5
+- Daily paintings by OpenAI's DALL-E 3
+- Emails delivered by Resend
 
-Built with love for **Hedvig** and **Ian** at Cascina Leone.
-
-Weather data from Davis Weatherlink.
-Air quality from World Air Quality Index Project.
-Louisina powered by Anthropic's Claude.
-Wine knowledge compiled from local Piedmont producers.
-Daily emails delivered by Resend.
-
-Special thanks to the small producers of Langhe, Roero, and Alta Langa who make exceptional wines! 🍷
+Special thanks to the small producers of Langhe, Roero, and Alta Langa who make wines that tell stories! 🍷
 
 ---
 
-**Buongiorno! Stay Punk! Enjoy your weather! 🦁☀️🍷**
+**Buongiorno, darlings! Stay Punk! Enjoy your weather! Live beautifully at Cascina Leone! 🦁☀️🍷**
+
+*— Louisina*
