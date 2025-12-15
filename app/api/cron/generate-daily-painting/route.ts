@@ -36,10 +36,12 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'No weather data available' }, { status: 404 });
     }
 
-    // Get presence data
-    const presenceResponse = await fetch(`${baseUrl}/api/presence`);
-    const presenceData = await presenceResponse.json();
-    const isPresent = presenceData.isPresent;
+    // Get presence data from Supabase
+    const now = new Date();
+    const todayDate = now.toISOString().split('T')[0];
+    const { data: presenceCheck } = await supabase
+      .rpc('is_present_on_date', { check_date: todayDate });
+    const isPresent = presenceCheck === true;
 
     // Get horoscope
     let horoscope = null;
