@@ -43,16 +43,12 @@ export async function GET(request: Request) {
       .rpc('is_present_on_date', { check_date: todayDate });
     const isPresent = presenceCheck === true;
 
-    // Get horoscope
-    let horoscope = null;
-    try {
-      const horoscopeResponse = await fetch(`${baseUrl}/api/horoscope`);
-      if (horoscopeResponse.ok) {
-        horoscope = await horoscopeResponse.json();
-      }
-    } catch (error) {
-      console.error('Error fetching horoscope:', error);
-    }
+    // Get horoscope from Supabase
+    const { data: horoscope } = await supabase
+      .from('daily_horoscopes')
+      .select('*')
+      .eq('date', todayDate)
+      .single();
 
     // Get forecast
     let forecastDays = null;
