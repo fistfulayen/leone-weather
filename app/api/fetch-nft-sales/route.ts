@@ -106,9 +106,9 @@ export async function GET() {
       });
     }
 
-    // Delete old sales (older than 24 hours) before inserting new ones
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    await supabaseAdmin.from('nft_sales').delete().lt('sale_timestamp', twentyFourHoursAgo);
+    // Delete all existing sales before inserting fresh data
+    // (This prevents duplicates from timestamp drift on re-scraping)
+    await supabaseAdmin.from('nft_sales').delete().neq('id', 0);
 
     // Insert new sales into database (using upsert to handle duplicates)
     const salesData = allSales.map((sale) => ({
