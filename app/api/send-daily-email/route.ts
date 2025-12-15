@@ -6,6 +6,15 @@ import { getHeaderEmoji } from '@/lib/weather-emoji';
 import { getSunTimes } from '@/lib/sun-times';
 import { getRecentAQIComparisons, getAQILevel, generateAQIStory, getAQIHealthGuidance, calculateNowCastAQI } from '@/lib/air-quality';
 
+// Helper function to determine current season
+function getSeason(date: Date): string {
+  const month = date.getMonth() + 1; // getMonth() returns 0-11
+  if (month >= 3 && month <= 5) return 'spring';
+  if (month >= 6 && month <= 8) return 'summer';
+  if (month >= 9 && month <= 11) return 'autumn';
+  return 'winter';
+}
+
 export async function GET(request: Request) {
   try {
     // Check if this is a preview request (for website display)
@@ -229,6 +238,37 @@ export async function GET(request: Request) {
       }
     } catch (error) {
       console.error('Error fetching local news:', error);
+    }
+
+    // Get daily painting
+    let dailyPainting = null;
+    try {
+      const baseUrl = process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : 'http://localhost:3000';
+
+      // Build context for the painting
+      const paintingContext = {
+        temperature: current.temp_c,
+        conditions: current.weather_description || 'current weather',
+        season: getSeason(now),
+        timeOfDay,
+        isPresent,
+      };
+
+      const contextParam = encodeURIComponent(JSON.stringify(paintingContext));
+      console.log('Fetching daily painting from:', `${baseUrl}/api/daily-painting?context=${contextParam}`);
+
+      const paintingResponse = await fetch(`${baseUrl}/api/daily-painting?context=${contextParam}`);
+      if (paintingResponse.ok) {
+        const paintingData = await paintingResponse.json();
+        if (paintingData.imageUrl || paintingData.prompt) {
+          dailyPainting = paintingData;
+          console.log(`Daily painting generated: ${paintingData.painter?.name}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching daily painting:', error);
     }
 
     // Get air quality data
@@ -550,6 +590,25 @@ ${airQualityData.story}
 ${narrative}
     </div>
   </div>
+
+${dailyPainting && dailyPainting.imageUrl ? `
+  <div style="background: #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+    <h2 style="font-size: 24px; margin: 0 0 16px 0; color: #111827;">🎨 Today's Vista from Cascina Leone</h2>
+    <p style="color: #6b7280; margin: 0 0 20px 0; font-style: italic;">
+      In the style of <strong>${dailyPainting.painter.name}</strong> (${dailyPainting.painter.period})
+    </p>
+    <div style="text-align: center; margin: 20px 0;">
+      <img
+        src="${dailyPainting.imageUrl}"
+        alt="Daily painting of Cascina Leone in the style of ${dailyPainting.painter.name}"
+        style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);"
+      />
+    </div>
+    <p style="color: #9ca3af; font-size: 12px; margin: 16px 0 0 0; text-align: center; font-style: italic;">
+      Source image: ${dailyPainting.sourceImage}
+    </p>
+  </div>
+` : ''}
 
 ${forecastDays.length > 0 ? `
   <div style="background: #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #e5e7eb;">
