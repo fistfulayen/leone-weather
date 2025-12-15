@@ -181,7 +181,7 @@ export async function GET(request: Request) {
       const { data: nftSales } = await supabaseAdmin
         .from('nft_sales')
         .select('*')
-        .order('price_eth', { ascending: false });
+        .order('sale_timestamp', { ascending: false });
 
       if (nftSales && nftSales.length > 0) {
         cryptoPunksSales = nftSales.map((sale: any) => ({
