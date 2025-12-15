@@ -500,6 +500,23 @@ ${dailyPainting && dailyPainting.imageUrl ? `
       </div>
     </div>
 
+    ${current.indoor_temp_c !== undefined && current.indoor_humidity !== undefined ? `
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+      <div>
+        <p style="color: #6b7280; margin: 0; font-size: 14px;">Inside Temp</p>
+        <p style="font-size: 24px; font-weight: bold; margin: 4px 0; color: #111827;">
+          ${current.indoor_temp_c.toFixed(1)}°C
+        </p>
+      </div>
+      <div>
+        <p style="color: #6b7280; margin: 0; font-size: 14px;">Inside Humidity</p>
+        <p style="font-size: 24px; font-weight: bold; margin: 4px 0; color: #111827;">
+          ${current.indoor_humidity}%
+        </p>
+      </div>
+    </div>
+    ` : ''}
+
     <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
       <p style="margin: 8px 0; color: #4b5563;">
         <strong>🌬️ Wind:</strong> ${current.wind_speed_kmh?.toFixed(1)} km/h
