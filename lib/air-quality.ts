@@ -16,6 +16,7 @@ const COMPARISON_CITIES = [
   { city: 'Turin', country: 'Italy', query: 'torino' },
   { city: 'Genoa', country: 'Italy', query: '@10883' }, // Mignanego station near Genoa
   { city: 'Rome', country: 'Italy', query: 'rome' },
+  { city: 'Tallinn', country: 'Estonia', query: 'tallinn' },
   { city: 'Paris', country: 'France', query: 'paris' },
   { city: 'Los Angeles', country: 'USA', query: 'los-angeles' },
   { city: 'New York', country: 'USA', query: 'new-york' },
@@ -164,6 +165,7 @@ function getCountryFlag(country: string): string {
     'UK': '🇬🇧',
     'Spain': '🇪🇸',
     'Germany': '🇩🇪',
+    'Estonia': '🇪🇪',
   };
   return flags[country] || '';
 }
@@ -186,7 +188,7 @@ export function generateAQIStory(currentAQI: number, comparisons: CityAQI[]): st
 
   // Show comparison to all Italian cities first, then select international cities
   const italianCities = sorted.filter(c => c.country === 'Italy');
-  const internationalCities = ['Paris', 'Los Angeles', 'Shanghai']
+  const internationalCities = ['Tallinn', 'Paris', 'Los Angeles', 'Shanghai']
     .map(city => sorted.find(c => c.city === city))
     .filter(Boolean);
 
