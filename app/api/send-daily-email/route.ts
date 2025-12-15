@@ -208,12 +208,19 @@ export async function GET() {
     // Get local news data
     let localNews = null;
     try {
-      const newsResponse = await fetch('http://localhost:3000/api/local-news');
+      // Determine the base URL based on environment
+      const baseUrl = process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : 'http://localhost:3000';
+
+      console.log('Fetching news from:', `${baseUrl}/api/local-news`);
+      const newsResponse = await fetch(`${baseUrl}/api/local-news`);
       if (newsResponse.ok) {
         const newsData = await newsResponse.json();
         if (newsData.articles && newsData.articles.length > 0) {
           // Limit to top 10-15 articles
           localNews = newsData.articles.slice(0, 15);
+          console.log(`Found ${localNews.length} news articles for email`);
         }
       }
     } catch (error) {
