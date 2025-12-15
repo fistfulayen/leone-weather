@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 interface CityWeather {
   city_name: string;
@@ -34,8 +34,6 @@ export default function CityWeatherCard() {
   useEffect(() => {
     async function fetchCityWeather() {
       try {
-        const supabase = createClient();
-
         const { data, error } = await supabase
           .from('city_weather')
           .select('*')
