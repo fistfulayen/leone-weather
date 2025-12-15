@@ -517,6 +517,25 @@ Sign off: "— Louisina 🦁"`;
     </p>
   </div>
 
+${dailyPainting && dailyPainting.imageUrl ? `
+  <div style="background: #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+    <h2 style="font-size: 24px; margin: 0 0 16px 0; color: #111827;">🎨 Today's Vista from Cascina Leone</h2>
+    <p style="color: #6b7280; margin: 0 0 20px 0; font-style: italic;">
+      In the style of <strong>${dailyPainting.painter.name}</strong> (${dailyPainting.painter.period})
+    </p>
+    <div style="text-align: center; margin: 20px 0;">
+      <img
+        src="${dailyPainting.imageUrl}"
+        alt="Daily painting of Cascina Leone in the style of ${dailyPainting.painter.name}"
+        style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);"
+      />
+    </div>
+    <p style="color: #9ca3af; font-size: 12px; margin: 16px 0 0 0; text-align: center; font-style: italic;">
+      Source image: ${dailyPainting.sourceImage}
+    </p>
+  </div>
+` : ''}
+
   <div style="background: #f9fafb; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
     <h2 style="font-size: 24px; margin: 0 0 16px 0; color: #111827;">Current Weather</h2>
 
@@ -622,25 +641,6 @@ ${airQualityData.story}
 ${narrative}
     </div>
   </div>
-
-${dailyPainting && dailyPainting.imageUrl ? `
-  <div style="background: #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-    <h2 style="font-size: 24px; margin: 0 0 16px 0; color: #111827;">🎨 Today's Vista from Cascina Leone</h2>
-    <p style="color: #6b7280; margin: 0 0 20px 0; font-style: italic;">
-      In the style of <strong>${dailyPainting.painter.name}</strong> (${dailyPainting.painter.period})
-    </p>
-    <div style="text-align: center; margin: 20px 0;">
-      <img
-        src="${dailyPainting.imageUrl}"
-        alt="Daily painting of Cascina Leone in the style of ${dailyPainting.painter.name}"
-        style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);"
-      />
-    </div>
-    <p style="color: #9ca3af; font-size: 12px; margin: 16px 0 0 0; text-align: center; font-style: italic;">
-      Source image: ${dailyPainting.sourceImage}
-    </p>
-  </div>
-` : ''}
 
 ${forecastDays.length > 0 ? `
   <div style="background: #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #e5e7eb;">
