@@ -376,6 +376,19 @@ export async function GET(request: Request) {
       narrative = 'Ciao! Louisina is taking a little break. The weather is lovely as always at Cascina Leone! — Louisina 🦁';
     }
 
+    // Calculate days until Alta Langa Love (July 16, 2027)
+    const altaLangaLove = new Date('2027-07-16T00:00:00+02:00'); // CET timezone
+    const todayMidnight = new Date(italyTime.toLocaleDateString('en-US', { timeZone: 'Europe/Rome' }));
+    const daysUntilALL = Math.ceil((altaLangaLove.getTime() - todayMidnight.getTime()) / (1000 * 60 * 60 * 24));
+
+    // Convert number to emoji digits (vintage counter style)
+    const numberToEmoji = (num: number): string => {
+      const digitEmojis = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣'];
+      return num.toString().split('').map(digit => digitEmojis[parseInt(digit)]).join(' ');
+    };
+
+    const countdownEmoji = numberToEmoji(daysUntilALL);
+
     // Format email HTML
     const emailHtml = `
 <!DOCTYPE html>
@@ -398,6 +411,14 @@ export async function GET(request: Request) {
         timeZone: 'Europe/Rome',
       })}
     </p>
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 16px 24px; margin: 20px auto; max-width: 400px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+      <p style="color: #ffffff; font-size: 14px; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">
+        Days Until Alta Langa Love
+      </p>
+      <p style="color: #ffffff; font-size: 36px; margin: 0; letter-spacing: 4px; font-weight: bold;">
+        ${countdownEmoji}
+      </p>
+    </div>
   </div>
 
 ${dailyPainting && dailyPainting.imageUrl ? `
