@@ -21,6 +21,10 @@
       "schedule": "0 4 * * *"
     },
     {
+      "path": "/api/cron/generate-daily-painting",
+      "schedule": "0 5 * * *"
+    },
+    {
       "path": "/api/send-daily-email",
       "schedule": "0 6 * * *"
     }
