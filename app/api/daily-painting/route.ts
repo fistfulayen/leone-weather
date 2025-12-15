@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -24,7 +23,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const contextParam = searchParams.get('context');
 
-    // Parse the weather/context data
+    // Parse the weather/context data (same context Louisina uses)
     let weatherContext = null;
     if (contextParam) {
       try {
@@ -70,94 +69,51 @@ export async function GET(request: Request) {
     const base64Image = imageBuffer.toString('base64');
     const mimeType = selectedImage.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
 
-    // Use Claude to analyze the image and create a detailed painting prompt
-    const anthropic = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
-    });
+    // Build the painting prompt using the same context Louisina uses
+    let promptContext = `Transform this photograph of Cascina Leone in Piemonte, Italy into a museum-quality oil painting in the style of ${todaysPainter.name} (${todaysPainter.period}). `;
 
-    // Build context description for Claude
-    let contextDescription = '';
     if (weatherContext) {
-      contextDescription = `
+      promptContext += `The painting should capture the ${weatherContext.season} atmosphere with ${weatherContext.temperature}°C ${weatherContext.conditions} weather during ${weatherContext.timeOfDay}. `;
 
-Weather Context:
-- Temperature: ${weatherContext.temperature}°C
-- Conditions: ${weatherContext.conditions}
-- Season: ${weatherContext.season}
-- Time of day: ${weatherContext.timeOfDay || 'morning'}
-- Location: Cascina Leone, Piemonte, Italy
-${weatherContext.isPresent !== undefined ? `- Owners present: ${weatherContext.isPresent ? 'Yes' : 'No'}` : ''}
-`;
+      if (weatherContext.isPresent !== undefined) {
+        promptContext += weatherContext.isPresent
+          ? `The estate feels alive with the owners' presence. `
+          : `The estate has a serene, unoccupied tranquility. `;
+      }
     }
 
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 1024,
-      messages: [
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'image',
-              source: {
-                type: 'base64',
-                media_type: mimeType,
-                data: base64Image,
-              },
-            },
-            {
-              type: 'text',
-              text: `You are an expert art curator and AI image generation specialist. Analyze this photograph of Cascina Leone in Piemonte, Italy, and create a detailed image generation prompt to transform it into an oil painting in the style of ${todaysPainter.name} (${todaysPainter.period}).
+    promptContext += `Paint in ${todaysPainter.name}'s distinctive style: ${todaysPainter.style}. `;
+    promptContext += `Display the finished oil painting in an ornate museum-quality gilt frame with elaborate baroque scrollwork and acanthus leaf details.`;
 
-${contextDescription}
-
-Style characteristics of ${todaysPainter.name}: ${todaysPainter.style}
-
-Create a detailed DALL-E 3 prompt that will generate an oil painting capturing:
-1. The essence of this specific scene from the photograph
-2. The distinctive style and techniques of ${todaysPainter.name}
-3. A museum-quality ornate gilt frame around the painting
-4. The current weather/seasonal context if provided
-
-Your prompt should be 2-3 sentences, highly specific about composition, lighting, colors, and artistic technique. Focus on what makes ${todaysPainter.name}'s style unique.
-
-Return ONLY the image generation prompt, nothing else.`,
-            },
-          ],
-        },
-      ],
-    });
-
-    const imagePrompt = response.content[0].type === 'text' ? response.content[0].text : '';
-
-    console.log('Generated prompt:', imagePrompt);
+    console.log('Generated prompt:', promptContext);
 
     // Check if OpenAI API key is available
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json({
         painter: todaysPainter,
         sourceImage: selectedImage,
-        prompt: imagePrompt,
+        prompt: promptContext,
         imageUrl: null,
         error: 'OpenAI API key not configured. Add OPENAI_API_KEY to .env.local to generate images.',
       });
     }
 
-    // Generate the image using gpt-image-1 (OpenAI's latest model, April 2025)
-    const openaiResponse = await fetch('https://api.openai.com/v1/images/generations', {
+    // Generate the painting using gpt-image-1 with the camera image as input
+    // Create a FormData object for the multipart request
+    const formData = new FormData();
+    const imageBlob = new Blob([imageBuffer], { type: mimeType });
+    formData.append('image', imageBlob, selectedImage);
+    formData.append('model', 'gpt-image-1');
+    formData.append('prompt', promptContext);
+    formData.append('n', '1');
+    formData.append('size', '1024x1024');
+
+    const openaiResponse = await fetch('https://api.openai.com/v1/images/edits', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
       },
-      body: JSON.stringify({
-        model: 'gpt-image-1',
-        prompt: imagePrompt,
-        n: 1,
-        size: '1024x1024',
-        quality: 'hd',
-        response_format: 'url', // Can also use 'b64_json' for base64
-      }),
+      body: formData,
     });
 
     if (!openaiResponse.ok) {
@@ -166,7 +122,7 @@ Return ONLY the image generation prompt, nothing else.`,
       return NextResponse.json({
         painter: todaysPainter,
         sourceImage: selectedImage,
-        prompt: imagePrompt,
+        prompt: promptContext,
         imageUrl: null,
         error: `Image generation failed: ${error}`,
       }, { status: 500 });
@@ -174,15 +130,13 @@ Return ONLY the image generation prompt, nothing else.`,
 
     const openaiData = await openaiResponse.json();
     const imageUrl = openaiData.data[0].url;
-    const revisedPrompt = openaiData.data[0].revised_prompt;
 
     console.log('Generated image URL:', imageUrl);
 
     return NextResponse.json({
       painter: todaysPainter,
       sourceImage: selectedImage,
-      prompt: imagePrompt,
-      revisedPrompt: revisedPrompt,
+      prompt: promptContext,
       imageUrl: imageUrl,
     });
 
