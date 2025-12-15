@@ -174,10 +174,11 @@ PARAGRAPH 4 - PISCES/VIRGO HOROSCOPE:
 Weave the daily horoscope themes (below) into PERSONAL advice for Hedvig + Ian. Connect today's astrological energy to:
 - Their relationship (Pisces emotional depth + Virgo practical care)
 - Weather + week ahead
-- Hedvig's dual life: Dior etalon elegance ↔ truffle farmer getting dirty
-- "Stay Punk" rebellious spirit + Estonian roots
+- Hedvig's creative duality: high fashion elegance meets earthy truffle hunting, meditation meets wild foraging
+- Her "Stay Punk" rebellious spirit, Estonian roots, and fierce independence
 - Love, Niina (10), yoga, meditation, running, food forest work, staying present
-- Remind her she's the etalon/standard others measure against
+- Capture the vibe of a woman who sets her own standards—elegant yet wild, refined yet rebellious
+BE CREATIVE with how you describe her! Don't repeat the same phrases. Find fresh ways to capture this essence.
 ${
   horoscope
     ? `
