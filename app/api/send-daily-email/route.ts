@@ -174,11 +174,16 @@ export async function GET(request: Request) {
     // Get NFT sales data from Artacle API (last 24 hours, > 0.5 ETH)
     let cryptoPunksSales = null;
     try {
-      const baseUrl = process.env.VERCEL_URL
+      // Use production URL directly if on Vercel, localhost otherwise
+      const baseUrl = process.env.VERCEL_ENV === 'production'
+        ? 'https://weather.altalanga.love'
+        : process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
         : 'http://localhost:3000';
 
       console.log('=== NFT SALES FETCH DEBUG ===');
+      console.log('VERCEL_ENV:', process.env.VERCEL_ENV);
+      console.log('VERCEL_URL:', process.env.VERCEL_URL);
       console.log('Base URL:', baseUrl);
       console.log('Full URL:', `${baseUrl}/api/cryptopunks-sales`);
 
@@ -212,12 +217,16 @@ export async function GET(request: Request) {
     // Get local news data
     let localNews = null;
     try {
-      // Determine the base URL based on environment
-      const baseUrl = process.env.VERCEL_URL
+      // Use production URL directly if on Vercel, localhost otherwise
+      const baseUrl = process.env.VERCEL_ENV === 'production'
+        ? 'https://weather.altalanga.love'
+        : process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
         : 'http://localhost:3000';
 
       console.log('=== LOCAL NEWS FETCH DEBUG ===');
+      console.log('VERCEL_ENV:', process.env.VERCEL_ENV);
+      console.log('VERCEL_URL:', process.env.VERCEL_URL);
       console.log('Base URL:', baseUrl);
       console.log('Full URL:', `${baseUrl}/api/local-news`);
 
