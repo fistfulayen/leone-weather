@@ -106,7 +106,7 @@ export async function GET(request: Request) {
         .eq('fetched_at', latestForecast.fetched_at)
         .gte('forecast_date', todayDate)
         .order('forecast_date', { ascending: true })
-        .limit(8);
+        .limit(7);
 
       if (forecasts && forecasts.length > 0) {
         forecastDays = forecasts;
