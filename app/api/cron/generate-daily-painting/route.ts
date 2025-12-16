@@ -50,10 +50,16 @@ export async function GET(request: Request) {
       .eq('date', todayDate)
       .single();
 
+    // Prepare headers with Vercel bypass token for all internal API calls
+    const apiHeaders: HeadersInit = {};
+    if (process.env.AUTOMATION_BYPASS_SECRET) {
+      apiHeaders['x-vercel-protection-bypass'] = process.env.AUTOMATION_BYPASS_SECRET;
+    }
+
     // Get forecast
     let forecastDays = null;
     try {
-      const forecastResponse = await fetch(`${baseUrl}/api/forecast`);
+      const forecastResponse = await fetch(`${baseUrl}/api/forecast`, { headers: apiHeaders });
       if (forecastResponse.ok) {
         const forecastData = await forecastResponse.json();
         forecastDays = forecastData.forecast;
@@ -65,7 +71,7 @@ export async function GET(request: Request) {
     // Get local news
     let localNews = null;
     try {
-      const newsResponse = await fetch(`${baseUrl}/api/local-news`);
+      const newsResponse = await fetch(`${baseUrl}/api/local-news`, { headers: apiHeaders });
       if (newsResponse.ok) {
         const newsData = await newsResponse.json();
         if (newsData.articles && newsData.articles.length > 0) {
@@ -79,7 +85,7 @@ export async function GET(request: Request) {
     // Get crypto prices
     let cryptoPrices = null;
     try {
-      const cryptoResponse = await fetch(`${baseUrl}/api/crypto-prices`);
+      const cryptoResponse = await fetch(`${baseUrl}/api/crypto-prices`, { headers: apiHeaders });
       if (cryptoResponse.ok) {
         cryptoPrices = await cryptoResponse.json();
       }
@@ -90,7 +96,7 @@ export async function GET(request: Request) {
     // Get NFT sales from Artacle API (last 24 hours, > 0.5 ETH)
     let cryptoPunksSales = null;
     try {
-      const punksResponse = await fetch(`${baseUrl}/api/cryptopunks-sales`);
+      const punksResponse = await fetch(`${baseUrl}/api/cryptopunks-sales`, { headers: apiHeaders });
       if (punksResponse.ok) {
         const punksData = await punksResponse.json();
         if (punksData.sales && punksData.sales.length > 0) {
@@ -151,7 +157,10 @@ export async function GET(request: Request) {
     // Step 2: Generate the painting
     console.log('Generating daily painting...');
     const contextParam = encodeURIComponent(JSON.stringify(paintingContext));
-    const paintingResponse = await fetch(`${baseUrl}/api/daily-painting?context=${contextParam}`);
+
+    const paintingResponse = await fetch(`${baseUrl}/api/daily-painting?context=${contextParam}`, {
+      headers: apiHeaders,
+    });
 
     if (!paintingResponse.ok) {
       throw new Error(`Painting generation failed: ${await paintingResponse.text()}`);
