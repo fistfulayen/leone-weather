@@ -52,8 +52,8 @@ export async function GET(request: Request) {
 
     // Prepare headers with Vercel bypass token for all internal API calls
     const apiHeaders: HeadersInit = {};
-    if (process.env.AUTOMATION_BYPASS_SECRET) {
-      apiHeaders['x-vercel-protection-bypass'] = process.env.AUTOMATION_BYPASS_SECRET;
+    if (process.env.VERCEL_AUTOMATION_BYPASS_SECRET) {
+      apiHeaders['x-vercel-protection-bypass'] = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
     }
 
     // Get forecast
