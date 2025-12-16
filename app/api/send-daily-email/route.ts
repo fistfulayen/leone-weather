@@ -429,9 +429,16 @@ export async function GET(request: Request) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="x-apple-disable-message-reformatting">
   <title>Daily Weather Report - Cascina Leone</title>
+  <style type="text/css">
+    /* Gmail-specific: prevent collapsing */
+    u + .body { min-width: 100vw; }
+    .gmail-blend-screen { background: #000; mix-blend-mode: screen; }
+    .gmail-blend-difference { background: #000; mix-blend-mode: difference; }
+  </style>
 </head>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #1f2937; max-width: 600px; margin: 0 auto; padding: 20px;">
+<body class="body" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #1f2937; max-width: 600px; margin: 0 auto; padding: 20px;">
 
   <div style="text-align: center; margin-bottom: 30px;">
     <h1 style="font-size: 32px; margin: 0; color: #111827;">${emoji} Cascina Leone</h1>

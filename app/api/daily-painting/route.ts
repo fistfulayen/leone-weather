@@ -175,39 +175,48 @@ Return ONLY the DALL-E 3 prompt, nothing else.`;
 
     const dallePrompt = response.content[0].type === 'text' ? response.content[0].text : '';
 
-    console.log('Claude-generated DALL-E prompt:', dallePrompt);
+    console.log('Claude-generated Nano Banana prompt:', dallePrompt);
 
-    // Check if OpenAI API key is available
-    if (!process.env.OPENAI_API_KEY) {
+    // Check if Gemini API key is available
+    if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json({
         painter: todaysPainter,
         sourceImage: selectedImage,
         prompt: dallePrompt,
         imageUrl: null,
-        error: 'OpenAI API key not configured. Add OPENAI_API_KEY to .env.local to generate images.',
+        error: 'Gemini API key not configured. Add GEMINI_API_KEY to .env.local to generate images.',
       });
     }
 
-    // Generate the painting using DALL-E 3 (text-to-image)
-    const openaiResponse = await fetch('https://api.openai.com/v1/images/generations', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: 'dall-e-3',
-        prompt: dallePrompt,
-        n: 1,
-        size: '1024x1024',
-        quality: 'hd',
-        style: 'vivid',
-      }),
-    });
+    // Generate the painting using Nano Banana Pro (Gemini 3 Pro Image)
+    const geminiResponse = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': process.env.GEMINI_API_KEY,
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: dallePrompt,
+            }],
+          }],
+          generationConfig: {
+            responseModalities: ['IMAGE'],
+            imageConfig: {
+              aspectRatio: '1:1',
+              imageSize: '2K',
+            },
+          },
+        }),
+      }
+    );
 
-    if (!openaiResponse.ok) {
-      const error = await openaiResponse.text();
-      console.error('OpenAI API error:', error);
+    if (!geminiResponse.ok) {
+      const error = await geminiResponse.text();
+      console.error('Gemini API error:', error);
       return NextResponse.json({
         painter: todaysPainter,
         sourceImage: selectedImage,
@@ -217,18 +226,27 @@ Return ONLY the DALL-E 3 prompt, nothing else.`;
       }, { status: 500 });
     }
 
-    const openaiData = await openaiResponse.json();
-    const imageUrl = openaiData.data[0].url;
-    const revisedPrompt = openaiData.data[0].revised_prompt;
+    const geminiData = await geminiResponse.json();
 
-    console.log('Generated image URL:', imageUrl);
-    console.log('DALL-E revised prompt:', revisedPrompt);
+    // Extract image data from Gemini response
+    const imagePart = geminiData.candidates?.[0]?.content?.parts?.find((part: any) => part.inlineData);
+    if (!imagePart?.inlineData?.data) {
+      throw new Error('No image data in Gemini response');
+    }
+
+    // Convert base64 image to a data URL
+    const imageBase64 = imagePart.inlineData.data;
+    const mimeType = imagePart.inlineData.mimeType || 'image/png';
+    const imageUrl = `data:${mimeType};base64,${imageBase64}`;
+
+    console.log('Generated image with Nano Banana Pro');
+    console.log('Image size:', imageBase64.length, 'bytes');
 
     return NextResponse.json({
       painter: todaysPainter,
       sourceImage: selectedImage,
       prompt: dallePrompt,
-      revisedPrompt: revisedPrompt,
+      revisedPrompt: dallePrompt, // Gemini doesn't revise prompts like DALL-E
       imageUrl: imageUrl,
     });
 
