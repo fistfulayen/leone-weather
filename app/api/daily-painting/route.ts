@@ -231,7 +231,7 @@ Return ONLY the DALL-E 3 prompt, nothing else.`;
       throw new Error('Failed to download image from DALL-E');
     }
     const imageArrayBuffer = await imageResponse.arrayBuffer();
-    const imageBuffer = Buffer.from(imageArrayBuffer);
+    const downloadedImageBuffer = Buffer.from(imageArrayBuffer);
 
     // Upload to Supabase Storage
     console.log('Uploading image to Supabase Storage...');
@@ -246,7 +246,7 @@ Return ONLY the DALL-E 3 prompt, nothing else.`;
 
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('daily-paintings')
-      .upload(fileName, imageBuffer, {
+      .upload(fileName, downloadedImageBuffer, {
         contentType: 'image/png',
         upsert: true, // Overwrite if exists
       });
