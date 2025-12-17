@@ -218,18 +218,57 @@ Return ONLY the DALL-E 3 prompt, nothing else.`;
     }
 
     const openaiData = await openaiResponse.json();
-    const imageUrl = openaiData.data[0].url;
+    const tempImageUrl = openaiData.data[0].url;
     const revisedPrompt = openaiData.data[0].revised_prompt;
 
-    console.log('Generated image URL:', imageUrl);
+    console.log('Generated temporary image URL:', tempImageUrl);
     console.log('DALL-E revised prompt:', revisedPrompt);
+
+    // Download the image from the temporary DALL-E URL
+    console.log('Downloading image from DALL-E...');
+    const imageResponse = await fetch(tempImageUrl);
+    if (!imageResponse.ok) {
+      throw new Error('Failed to download image from DALL-E');
+    }
+    const imageArrayBuffer = await imageResponse.arrayBuffer();
+    const imageBuffer = Buffer.from(imageArrayBuffer);
+
+    // Upload to Supabase Storage
+    console.log('Uploading image to Supabase Storage...');
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SECRET_KEY!
+    );
+
+    const today = new Date().toISOString().split('T')[0];
+    const fileName = `painting-${today}-${todaysPainter.name.toLowerCase().replace(/\s+/g, '-')}.png`;
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('daily-paintings')
+      .upload(fileName, imageBuffer, {
+        contentType: 'image/png',
+        upsert: true, // Overwrite if exists
+      });
+
+    if (uploadError) {
+      console.error('Error uploading to Supabase Storage:', uploadError);
+      throw uploadError;
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('daily-paintings')
+      .getPublicUrl(fileName);
+
+    console.log('Image uploaded successfully. Public URL:', publicUrl);
 
     return NextResponse.json({
       painter: todaysPainter,
       sourceImage: selectedImage,
       prompt: dallePrompt,
       revisedPrompt: revisedPrompt,
-      imageUrl: imageUrl,
+      imageUrl: publicUrl,
     });
 
   } catch (error) {
