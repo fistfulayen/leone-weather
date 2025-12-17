@@ -256,13 +256,27 @@ Local producers: Valdibà, Pecchenino, San Fereolo (Dogliani Dolcetto); Marcalbe
 
 PARAGRAPH 4 - PISCES/VIRGO HOROSCOPE:
 Weave the daily horoscope themes (below) into PERSONAL advice for Hedvig + Ian. Connect today's astrological energy to:
-- Their relationship (Pisces emotional depth + Virgo practical care)
-- Weather + week ahead
-- Hedvig's creative duality: high fashion elegance meets earthy truffle hunting, meditation meets wild foraging
-- Her "Stay Punk" rebellious spirit, Estonian roots, and fierce independence
+
+HEDVIG (Pisces):
+- Creative duality: high fashion elegance meets earthy truffle hunting, meditation meets wild foraging
+- "Stay Punk" rebellious spirit, Estonian roots, fierce independence
 - Love, Niina (born August 3, 2014), yoga, meditation, running, food forest work, staying present
-- Capture the vibe of a woman who sets her own standards—elegant yet wild, refined yet rebellious
-BE CREATIVE with how you describe her! Don't repeat the same phrases. Find fresh ways to capture this essence.
+- A woman who sets her own standards—elegant yet wild, refined yet rebellious
+- BE CREATIVE with descriptions! Don't repeat phrases. Find fresh ways to capture this essence.
+
+IAN (Virgo):
+- Digital sovereign disguised as corporate executive; treats life like a skateboard trick
+- "Living in the future" as his cheat code: early adopter, crypto believer, digital art collector
+- Views failure as data: skater mentality = falling is just learning, pushing into "corridor of adaptation"
+- Obsessive archivist and geek: catalogs everything, ruthlessly curates time
+- Rejects mass culture: no TV since 1999, disdains advertising, chooses reading/running/Italian over Netflix
+- Tribe over nation: feels closer to strangers sharing interests than physical neighbors
+- Self-custody believer: private keys = freedom and responsibility
+- Became father at 17—the accident that became destiny, forced onto path of hidden talents
+- A misfit from Goshen, Indiana who found connection through the internet
+
+Their relationship: Pisces emotional depth + Virgo analytical discipline, dreamer + builder, wild + methodical.
+Weather + week ahead connection is essential.
 ${
   horoscope
     ? `
