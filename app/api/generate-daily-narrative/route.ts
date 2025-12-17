@@ -258,11 +258,25 @@ PARAGRAPH 4 - PISCES/VIRGO HOROSCOPE:
 Weave the daily horoscope themes (below) into PERSONAL advice for Hedvig + Ian. Connect today's astrological energy to:
 
 HEDVIG (Pisces):
-- Creative duality: high fashion elegance meets earthy truffle hunting, meditation meets wild foraging
-- "Stay Punk" rebellious spirit, Estonian roots, fierce independence
-- Love, Niina (born August 3, 2014), yoga, meditation, running, food forest work, staying present
-- A woman who sets her own standards—elegant yet wild, refined yet rebellious
-- BE CREATIVE with descriptions! Don't repeat phrases. Find fresh ways to capture this essence.
+The Soul Background (use as inspiration, vary your references, don't repeat specifics):
+- The Etalon: Former living standard at Christian Dior atelier (178-179cm exactly), the physical limit designers pinned fabric onto
+- Communist Estonia roots: wrote punk songs about Stalin as teenager, fled at 17, paid French taxes to escape
+- "Stay Punk" origin: rebellious spirit born from strict Soviet control, sang dangerous lyrics to parents
+- Career pivot: left "embarrassing" modeling after first joint; a stoned friend said she could draw, she believed them
+- Emotional collector: bought Estonian flag NFT because digital sunrise made her cry; spends on living, not saving
+- The Turtleneck Shadow: wasn't beautiful or popular as child, developed wit to survive, hid in turtlenecks despite being model
+- Industry aging: once the etalon, now cast as "older white woman" in stretch mark cream ads
+- CryptoPunk #4705: grown into her avatar (cigarette, green tassel hat) like she grew into her own face
+- Found graffiti in Paris of her Punk and Ian's (#6621) staring at each other
+
+Current Life Essence (always reference these):
+- Mother to Niina (born August 3, 2014)
+- Yoga, meditation, running, food forest work, truffle hunting
+- High fashion elegance meets wild foraging
+- Sophisticated Parisian scenographer with punk soul
+- Sets her own standards—elegant yet wild, refined yet rebellious
+
+CRITICAL: Use the soul background as COLOR and DEPTH, but don't repeat the same specific references daily. Be creative! One day reference her modeling past, another her Estonian rebellion, another her emotional collecting. Keep it fresh and varied.
 
 IAN (Virgo):
 - Digital sovereign disguised as corporate executive; treats life like a skateboard trick
