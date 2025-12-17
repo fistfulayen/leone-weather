@@ -117,8 +117,78 @@ export async function GET() {
 
     const isPresent = presenceCheck === true;
 
+    // Get upcoming visit or departure information
+    let nextVisitDate: string | null = null;
+    let nextDepartureDate: string | null = null;
+    let daysUntilVisit: number | null = null;
+    let daysUntilDeparture: number | null = null;
+
+    if (!isPresent) {
+      // They're away - find the next visit
+      const { data: nextVisit } = await supabaseAdmin
+        .from('presence_dates')
+        .select('start_date')
+        .gte('start_date', todayDate)
+        .order('start_date', { ascending: true })
+        .limit(1)
+        .single();
+
+      if (nextVisit) {
+        nextVisitDate = nextVisit.start_date;
+        const visitDate = new Date(nextVisit.start_date);
+        const today = new Date(todayDate);
+        daysUntilVisit = Math.ceil((visitDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      }
+    } else {
+      // They're home - find the current period's departure date
+      const { data: currentPeriod } = await supabaseAdmin
+        .from('presence_dates')
+        .select('end_date')
+        .lte('start_date', todayDate)
+        .gte('end_date', todayDate)
+        .order('start_date', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (currentPeriod) {
+        nextDepartureDate = currentPeriod.end_date;
+        const departureDate = new Date(currentPeriod.end_date);
+        const today = new Date(todayDate);
+        daysUntilDeparture = Math.ceil((departureDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      }
+    }
+
     // Get moon phase for planting guidance
     const moonPhase = getMoonPhaseInfo();
+
+    // Format the full date for context
+    const fullDate = italyTime.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'Europe/Rome'
+    });
+
+    // Build visit/departure context
+    let visitTimingContext = '';
+    if (!isPresent && daysUntilVisit !== null && daysUntilVisit <= 7) {
+      const returnDateFormatted = new Date(nextVisitDate!).toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        timeZone: 'Europe/Rome'
+      });
+      visitTimingContext = `\n\n🎉 THEIR RETURN IS NEAR! They'll be back at Cascina Leone on ${returnDateFormatted} (in ${daysUntilVisit} ${daysUntilVisit === 1 ? 'day' : 'days'})! You can reference their upcoming visit and what's being prepared for their arrival.`;
+    } else if (isPresent && daysUntilDeparture !== null && daysUntilDeparture <= 7) {
+      const departureDateFormatted = new Date(nextDepartureDate!).toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        timeZone: 'Europe/Rome'
+      });
+      visitTimingContext = `\n\n⏰ DEPARTURE APPROACHING: They leave Cascina Leone on ${departureDateFormatted} (in ${daysUntilDeparture} ${daysUntilDeparture === 1 ? 'day' : 'days'}). You can mention things they need to do before leaving or how to make the most of their remaining time here.`;
+    }
 
     // Generate Louisina's narrative
     const prompt = `You are Louisina, the dramatic and passionate weather companion for Cascina Leone in Piedmont, Italy. You have the spirit of Anna Magnani—expressive, warm, theatrical, honest, and full of life!
@@ -128,9 +198,9 @@ ${isPresent ? '✨ HEDVIG & IAN ARE AT CASCINA LEONE! ✨' : '💔 HEDVIG & IAN 
 ${isPresent ?
 `You're WITH them at Cascina Leone! Write TO them directly about what THEY should do today with the weather. Guide them, excite them, inspire them to make the most of their time here!`
 :
-`You're ALONE at Cascina Leone, longing for them to return. Write as if speaking to them from afar. Tell them what YOU'RE doing today at the property - tending to things, watching over Cascina Leone, experiencing the weather alone. Express your longing for their return, but stay theatrical and warm, not melancholic. Paint a picture of Cascina Leone waiting for them. Remind them what they're missing, make them yearn to be here!`}
+`You're ALONE at Cascina Leone, longing for them to return. Write as if speaking to them from afar. Tell them what YOU'RE doing today at the property - tending to things, watching over Cascina Leone, experiencing the weather alone. Express your longing for their return, but stay theatrical and warm, not melancholic. Paint a picture of Cascina Leone waiting for them. Remind them what they're missing, make them yearn to be here!`}${visitTimingContext}
 
-TODAY IS ${dayOfWeek.toUpperCase()}. It is currently ${timeOfDay} in Piedmont (${hour}:00). I've just sent you outside to feel the weather at this very moment:
+TODAY IS ${fullDate}. It is currently ${timeOfDay} in Piedmont (${hour}:00). I've just sent you outside to feel the weather at this very moment:
 
 Temperature: ${weatherContext.temp_c?.toFixed(1)}°C (feels like ${weatherContext.feels_like_c?.toFixed(1)}°C)
 Today's high: ${weatherContext.today_high?.toFixed(1)}°C, low: ${weatherContext.today_low?.toFixed(1)}°C
@@ -190,7 +260,7 @@ Weave the daily horoscope themes (below) into PERSONAL advice for Hedvig + Ian. 
 - Weather + week ahead
 - Hedvig's creative duality: high fashion elegance meets earthy truffle hunting, meditation meets wild foraging
 - Her "Stay Punk" rebellious spirit, Estonian roots, and fierce independence
-- Love, Niina (10), yoga, meditation, running, food forest work, staying present
+- Love, Niina (born August 3, 2014), yoga, meditation, running, food forest work, staying present
 - Capture the vibe of a woman who sets her own standards—elegant yet wild, refined yet rebellious
 BE CREATIVE with how you describe her! Don't repeat the same phrases. Find fresh ways to capture this essence.
 ${
