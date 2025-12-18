@@ -814,7 +814,7 @@ ${cryptoPunksSales && cryptoPunksSales.length > 0 ? `
 
     // Send email via Resend
     const { data, error } = await resend.emails.send({
-      from: 'Louisina at Cascina Leone <weather@altalanga.love>',
+      from: 'Louisina at Cascina Leone <weather@send.altalanga.love>',
       to: ['hedvigmaigre@me.com', 'fistfulayen@gmail.com'],
       subject: `${emoji} Your Daily Weather Report - Cascina Leone`,
       html: emailHtml,
