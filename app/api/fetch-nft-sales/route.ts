@@ -106,6 +106,42 @@ export async function GET() {
       });
     }
 
+    // Download and re-host images in Supabase Storage
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SECRET_KEY!
+    );
+
+    for (const sale of allSales) {
+      try {
+        // Download image
+        const imageResponse = await fetch(sale.imageUrl);
+        if (imageResponse.ok) {
+          const imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
+
+          // Upload to Supabase
+          const fileName = `nft-${sale.tokenId}-${Date.now()}.png`;
+          const { error: uploadError } = await supabase.storage
+            .from('daily-paintings')
+            .upload(`nft-sales/${fileName}`, imageBuffer, {
+              contentType: 'image/png',
+              upsert: true,
+            });
+
+          if (!uploadError) {
+            const { data: { publicUrl } } = supabase.storage
+              .from('daily-paintings')
+              .getPublicUrl(`nft-sales/${fileName}`);
+            sale.imageUrl = publicUrl;
+          }
+        }
+      } catch (error) {
+        console.error(`Failed to re-host image for ${sale.tokenName}:`, error);
+        // Keep original URL if download fails
+      }
+    }
+
     // Delete all existing sales before inserting fresh data
     // (This prevents duplicates from timestamp drift on re-scraping)
     await supabaseAdmin.from('nft_sales').delete().neq('id', 0);
