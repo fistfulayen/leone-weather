@@ -431,14 +431,14 @@ export async function GET(request: Request) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="x-apple-disable-message-reformatting">
   <title>Daily Weather Report - Cascina Leone</title>
-  <style type="text/css">
-    /* Gmail-specific: prevent collapsing */
-    u + .body { min-width: 100vw; }
-    .gmail-blend-screen { background: #000; mix-blend-mode: screen; }
-    .gmail-blend-difference { background: #000; mix-blend-mode: difference; }
-  </style>
 </head>
-<body class="body" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #1f2937; max-width: 600px; margin: 0 auto; padding: 20px;">
+<body style="margin: 0; padding: 0; background-color: #f3f4f6;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f3f4f6;">
+    <tr>
+      <td align="center" style="padding: 20px 0;">
+        <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; width: 100%; background-color: #ffffff;">
+          <tr>
+            <td style="padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #1f2937;">
 
   <div style="text-align: center; margin-bottom: 30px;">
     <h1 style="font-size: 32px; margin: 0; color: #111827;">${emoji} Cascina Leone</h1>
@@ -798,6 +798,12 @@ ${cryptoPunksSales && cryptoPunksSales.length > 0 ? `
     </p>
   </div>
 
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>
     `;
@@ -814,10 +820,15 @@ ${cryptoPunksSales && cryptoPunksSales.length > 0 ? `
 
     // Send email via Resend
     const { data, error } = await resend.emails.send({
-      from: 'Louisina at Cascina Leone <weather@send.altalanga.love>',
+      from: 'Louisina <weather@send.altalanga.love>',
       to: ['hedvigmaigre@me.com', 'fistfulayen@gmail.com'],
-      subject: `${emoji} Your Daily Weather Report - Cascina Leone`,
+      replyTo: 'fistfulayen@gmail.com',
+      subject: `${emoji} Daily Weather - Cascina Leone`,
       html: emailHtml,
+      headers: {
+        'X-Entity-Ref-ID': '1',
+        'List-Unsubscribe': '<mailto:fistfulayen@gmail.com?subject=unsubscribe>',
+      },
     });
 
     if (error) {
