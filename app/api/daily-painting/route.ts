@@ -124,30 +124,34 @@ ${fullContext.cryptoPunks}
 `;
     }
 
-    const claudePrompt = `You are an expert art curator helping create an image generation prompt for an oil painting.
+    const claudePrompt = `You are an expert art curator creating a museum exhibition. Generate an image generation prompt for Gemini 3 Pro Image.
 
-TASK: Analyze this photograph of Cascina Leone and create a detailed prompt for Gemini 3 Pro Image that will generate a museum-quality oil painting in the style of ${todaysPainter.name} (${todaysPainter.period}).
+TASK: Transform this photograph of Cascina Leone into an oil painting by ${todaysPainter.name} (${todaysPainter.period}) that captures today's weather conditions and forecast.
 
-${contextDescription}
+TODAY'S WEATHER:
+- Current: ${fullContext?.temperature}°C, ${fullContext?.conditions}
+- Feels like: ${fullContext?.feelsLike}°C
+- Wind: ${fullContext?.windSpeed} km/h
+- Rain today: ${fullContext?.rainToday} mm
+- Humidity: ${fullContext?.humidity}%
+- Time: ${fullContext?.timeOfDay}, ${fullContext?.season}
+
+${fullContext?.forecast ? `FORECAST: ${fullContext.forecast}` : ''}
 
 PAINTER'S STYLE: ${todaysPainter.style}
 
-INSTRUCTIONS:
-1. Describe what you see in the photograph in rich visual detail
-2. Incorporate the weather/seasonal context into the painting's mood and atmosphere
-3. Weave in the emotional context (presence, horoscope themes, local events)
-4. Specify how ${todaysPainter.name} would paint this scene using their distinctive techniques
-5. Include a museum-quality ornate gilt frame with baroque details
+CRITICAL REQUIREMENTS:
+1. Paint the scene from the photograph interpreting it through TODAY'S WEATHER CONDITIONS
+2. Use ${todaysPainter.name}'s distinctive techniques and color palette
+3. The weather must be VISIBLE in the painting (clouds, mist, rain, wind, light quality)
+4. Include an ornate baroque gilt frame with acanthus leaves and scrollwork
+5. **MOST IMPORTANT**: The frame must have a visible brass plaque at the bottom center with clearly legible text showing:
+   - Title: "[Create an evocative Italian title based on weather/scene]"
+   - Artist: "${todaysPainter.name}, ${todaysPainter.period.split('-')[0]}"
 
-Your prompt should be 4-5 sentences that paint a vivid picture. Be specific about:
-- Composition and perspective
-- Lighting and atmosphere (informed by weather/time of day)
-- Color palette (influenced by painter's style and weather)
-- Brushwork and technique specific to ${todaysPainter.name}
-- Emotional mood (informed by presence, horoscope, current events)
-- The ornate gilt frame
+Create a detailed 5-6 sentence prompt. Be specific about weather interpretation, ${todaysPainter.name}'s painting techniques, and ensure the plaque text is legible and prominent.
 
-Return ONLY the image generation prompt, nothing else.`;
+Return ONLY the complete image generation prompt.`;
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-5-20250929',
