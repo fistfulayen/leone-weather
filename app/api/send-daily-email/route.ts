@@ -822,13 +822,8 @@ ${cryptoPunksSales && cryptoPunksSales.length > 0 ? `
     const { data, error } = await resend.emails.send({
       from: 'Louisina <weather@send.altalanga.love>',
       to: ['hedvigmaigre@me.com', 'fistfulayen@gmail.com'],
-      replyTo: 'fistfulayen@gmail.com',
       subject: `${emoji} Daily Weather - Cascina Leone`,
       html: emailHtml,
-      headers: {
-        'X-Entity-Ref-ID': '1',
-        'List-Unsubscribe': '<mailto:fistfulayen@gmail.com?subject=unsubscribe>',
-      },
     });
 
     if (error) {
