@@ -753,19 +753,28 @@ ${cryptoPunksSales && cryptoPunksSales.length > 0 ? `
   <div style="background: #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #e5e7eb;">
     <h2 style="font-size: 24px; margin: 0 0 20px 0; color: #111827;">🎨 Digital Art Gallery (Last 24 Hours)</h2>
     ${cryptoPunksSales.map((sale: any) => `
-      <div style="padding: 16px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 12px;">
-        <p style="font-size: 18px; font-weight: 600; color: #111827; margin: 0 0 4px 0;">
-          Pixel Art #${sale.punkId}
-        </p>
-        <p style="font-size: 14px; color: #6b7280; margin: 0 0 8px 0;">
-          Digital Collectible by Larva Labs
-        </p>
-        <p style="font-size: 16px; font-weight: 500; color: #059669; margin: 0 0 4px 0;">
-          $${sale.priceUsd.toLocaleString()} USD
-        </p>
-        <p style="font-size: 14px; color: #9ca3af; margin: 0;">
-          ${sale.hoursAgo} hours ago
-        </p>
+      <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 12px;">
+        <img
+          src="${sale.imageUrl}"
+          alt="Pixel Art ${sale.punkId}"
+          width="96"
+          height="96"
+          style="border-radius: 4px; object-fit: cover;"
+        />
+        <div style="flex: 1;">
+          <p style="font-size: 18px; font-weight: 600; color: #111827; margin: 0 0 4px 0;">
+            Pixel Art #${sale.punkId}
+          </p>
+          <p style="font-size: 14px; color: #6b7280; margin: 0 0 8px 0;">
+            Digital Collectible by Larva Labs
+          </p>
+          <p style="font-size: 16px; font-weight: 500; color: #059669; margin: 0 0 4px 0;">
+            $${sale.priceUsd.toLocaleString()} USD
+          </p>
+          <p style="font-size: 14px; color: #9ca3af; margin: 0;">
+            ${sale.hoursAgo} hours ago
+          </p>
+        </div>
       </div>
     `).join('')}
   </div>
