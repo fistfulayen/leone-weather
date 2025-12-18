@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     const isPreview = searchParams.get('preview') === 'true';
 
     // Test mode for incrementally adding content to diagnose Apple Mail issues
-    // Options: 'basic', 'icons', 'crypto', 'news', 'painting', 'full' (default)
+    // Options: 'basic', 'icons', 'crypto', 'nfts', 'news', 'painting', 'full' (default)
     const testMode = searchParams.get('mode') || 'full';
 
     // Get current reading
@@ -150,7 +150,7 @@ export async function GET(request: Request) {
 
     // Get crypto prices from database (fetched by cron job)
     let cryptoPrices = null;
-    const includeCrypto = ['crypto', 'news', 'painting', 'full'].includes(testMode);
+    const includeCrypto = ['crypto', 'nfts', 'news', 'painting', 'full'].includes(testMode);
     if (includeCrypto) {
     try {
       const { data: latestCrypto } = await supabaseAdmin
@@ -184,7 +184,7 @@ export async function GET(request: Request) {
 
     // Get NFT sales from database (fetched by cron job)
     let cryptoPunksSales = null;
-    const includeNFTs = ['news', 'painting', 'full'].includes(testMode);
+    const includeNFTs = ['nfts', 'news', 'painting', 'full'].includes(testMode);
     if (includeNFTs) {
     try {
       const { data: nftSales } = await supabaseAdmin
@@ -214,7 +214,8 @@ export async function GET(request: Request) {
 
     // Get local news from database (fetched by cron job)
     let localNews = null;
-    if (includeNFTs) {
+    const includeNews = ['news', 'painting', 'full'].includes(testMode);
+    if (includeNews) {
     try {
       const { data: newsArticles } = await supabaseAdmin
         .from('local_news_articles')
