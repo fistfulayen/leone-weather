@@ -755,7 +755,7 @@ ${cryptoPunksSales && cryptoPunksSales.length > 0 ? `
     ${cryptoPunksSales.map((sale: any) => `
       <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 12px;">
         <img
-          src="${sale.imageUrl}"
+          src="https://www.larvalabs.com/public/images/cryptopunks/punk${sale.punkId}.png"
           alt="Pixel Art ${sale.punkId}"
           width="96"
           height="96"
