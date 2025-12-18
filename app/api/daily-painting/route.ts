@@ -200,19 +200,8 @@ Return ONLY the complete image generation prompt.`;
 
     console.log('Generating image with Gemini 3 Pro Image (Nano Banana Pro)...');
 
-    const geminiResult = await model.generateContent({
-      contents: [{
-        role: 'user',
-        parts: [{ text: imagePrompt }],
-      }],
-      generationConfig: {
-        responseModalities: ['IMAGE'],
-        imageConfig: {
-          imageSize: '2K', // High resolution (2048x2048)
-          aspectRatio: '1:1',
-        },
-      },
-    });
+    // Generate the image (Gemini 3 Pro defaults to high quality with proper aspect ratios)
+    const geminiResult = await model.generateContent(imagePrompt);
 
     // Extract image data from response
     const parts = geminiResult.response.candidates?.[0]?.content?.parts;
@@ -279,7 +268,6 @@ Return ONLY the complete image generation prompt.`;
       sourceImage: selectedImage,
       prompt: imagePrompt,
       model: 'gemini-3-pro-image-preview',
-      resolution: '2K',
       imageUrl: publicUrl,
     });
 
