@@ -763,10 +763,10 @@ ${cryptoPunksSales && cryptoPunksSales.length > 0 ? `
         />
         <div style="flex: 1;">
           <p style="font-size: 18px; font-weight: 600; color: #111827; margin: 0 0 4px 0;">
-            Pixel Art #${sale.punkId}
+            ${sale.tokenName}
           </p>
           <p style="font-size: 14px; color: #6b7280; margin: 0 0 8px 0;">
-            Digital Collectible by Larva Labs
+            ${sale.collectionName}${sale.collectionArtist ? ` by ${sale.collectionArtist}` : ''}
           </p>
           <p style="font-size: 16px; font-weight: 500; color: #059669; margin: 0 0 4px 0;">
             $${sale.priceUsd.toLocaleString()} USD
