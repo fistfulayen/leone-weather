@@ -818,9 +818,9 @@ ${cryptoPunksSales && cryptoPunksSales.length > 0 ? `
       });
     }
 
-    // Send email via Resend
+    // Send email via Resend using Gmail address (better deliverability)
     const { data, error } = await resend.emails.send({
-      from: 'Louisina <weather@send.altalanga.love>',
+      from: 'Louisina at Cascina Leone <fistfulayen@gmail.com>',
       to: ['hedvigmaigre@me.com', 'fistfulayen@gmail.com'],
       subject: `${emoji} Daily Weather - Cascina Leone`,
       html: emailHtml,
