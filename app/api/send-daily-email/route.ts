@@ -25,6 +25,9 @@ export async function GET(request: Request) {
     // Options: 'basic', 'icons', 'crypto', 'nfts', 'newsonly', 'paintingonly', 'news', 'painting', 'full' (default)
     const testMode = searchParams.get('mode') || 'full';
 
+    // Limit number of NFT items (for testing if volume triggers filters)
+    const nftLimit = searchParams.get('nftlimit') ? parseInt(searchParams.get('nftlimit')!) : null;
+
     // Get current reading
     const { data: readings } = await supabaseAdmin
       .from('readings')
@@ -183,6 +186,7 @@ export async function GET(request: Request) {
     }
 
     // Get NFT sales from database (fetched by cron job)
+    // Limited to top 10 by price to avoid Apple Mail HM07 spam filter (threshold is 21 items)
     let cryptoPunksSales = null;
     const includeNFTs = ['nfts', 'news', 'painting', 'full'].includes(testMode);
     if (includeNFTs) {
@@ -190,10 +194,14 @@ export async function GET(request: Request) {
       const { data: nftSales } = await supabaseAdmin
         .from('nft_sales')
         .select('*')
-        .order('sale_timestamp', { ascending: false });
+        .order('price_eth', { ascending: false });
 
       if (nftSales && nftSales.length > 0) {
-        cryptoPunksSales = nftSales.map((sale: any) => ({
+        // Limit to top 10 highest-value sales (or nftLimit for testing)
+        const limit = nftLimit || 10;
+        const salesToShow = nftSales.slice(0, limit);
+
+        cryptoPunksSales = salesToShow.map((sale: any) => ({
           tokenName: sale.token_name,
           collectionName: sale.collection_name,
           collectionArtist: sale.collection_artist,
@@ -205,7 +213,7 @@ export async function GET(request: Request) {
           punkId: sale.token_id,
           hoursAgo: sale.hours_ago,
         }));
-        console.log('NFT sales loaded from database:', cryptoPunksSales.length);
+        console.log(`NFT sales loaded: ${cryptoPunksSales.length} (top sales by price)`);
       }
     } catch (error) {
       console.error('Error loading NFT sales from database:', error);
@@ -751,7 +759,7 @@ ${localNews && localNews.length > 0 ? `
 
 ${cryptoPunksSales && cryptoPunksSales.length > 0 ? `
   <div style="background: #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #e5e7eb;">
-    <h2 style="font-size: 24px; margin: 0 0 20px 0; color: #111827;">🎨 Digital Art Gallery (Last 24 Hours)</h2>
+    <h2 style="font-size: 24px; margin: 0 0 20px 0; color: #111827;">🎨 Top Digital Art Sales (Last 24 Hours)</h2>
     ${cryptoPunksSales.map((sale: any) => `
       <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 12px;">
         <img
