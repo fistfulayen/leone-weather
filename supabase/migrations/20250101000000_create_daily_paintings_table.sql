@@ -35,7 +35,8 @@ BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = '';
 
 -- Create trigger to auto-update updated_at
 CREATE TRIGGER update_daily_paintings_updated_at
@@ -50,6 +51,4 @@ ALTER TABLE daily_paintings ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access" ON daily_paintings
   FOR SELECT USING (true);
 
--- Allow service role full access
-CREATE POLICY "Allow service role full access" ON daily_paintings
-  FOR ALL USING (auth.role() = 'service_role');
+-- Note: service_role bypasses RLS by default, no policy needed

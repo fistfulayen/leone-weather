@@ -27,11 +27,12 @@ BEGIN
     da.title,
     da.artist,
     da.description
-  FROM daily_albums da
+  FROM public.daily_albums da
   WHERE da.day_of_year = current_day_of_year
   LIMIT 1;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = '';
 
 -- Enable Row Level Security
 ALTER TABLE daily_albums ENABLE ROW LEVEL SECURITY;

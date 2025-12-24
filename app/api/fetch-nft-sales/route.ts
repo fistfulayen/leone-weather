@@ -137,30 +137,15 @@ export async function GET() {
 
           let imageBuffer: Buffer = Buffer.from(arrayBuffer);
 
-          // Check if it's an SVG (by content-type or content)
+          // Check if it's an SVG (skip these as they don't display well in emails)
           const bufferStart = imageBuffer.length > 0 ? imageBuffer.toString('utf8', 0, Math.min(100, imageBuffer.length)).toLowerCase() : '';
           const isSVG = contentType.includes('svg') ||
                         bufferStart.includes('<svg') ||
                         bufferStart.includes('<?xml');
 
           if (isSVG) {
-            console.log(`Converting SVG to PNG for ${sale.tokenName}`);
-            try {
-              // Convert SVG to PNG using resvg
-              const { Resvg } = await import('@resvg/resvg-js');
-              const resvg = new Resvg(imageBuffer, {
-                fitTo: {
-                  mode: 'width',
-                  value: 512, // 512px width for email display
-                },
-              });
-              const pngData = resvg.render();
-              imageBuffer = pngData.asPng();
-              console.log(`Successfully converted ${sale.tokenName} to PNG`);
-            } catch (conversionError) {
-              console.error(`Failed to convert SVG for ${sale.tokenName}:`, conversionError);
-              continue; // Skip this sale if conversion fails
-            }
+            console.log(`Skipping ${sale.tokenName}: SVG images not supported`);
+            continue;
           }
 
           // Upload to Supabase

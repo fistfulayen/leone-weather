@@ -21,11 +21,12 @@ CREATE OR REPLACE FUNCTION is_present_on_date(check_date DATE)
 RETURNS BOOLEAN AS $$
 BEGIN
   RETURN EXISTS (
-    SELECT 1 FROM presence_dates
+    SELECT 1 FROM public.presence_dates
     WHERE check_date >= start_date AND check_date <= end_date
   );
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = '';
 
 -- Enable Row Level Security (optional but recommended)
 ALTER TABLE presence_dates ENABLE ROW LEVEL SECURITY;
