@@ -113,12 +113,55 @@ export async function GET() {
       process.env.SUPABASE_SECRET_KEY!
     );
 
+    // Filter out sales and re-host images
+    const validSales = [];
     for (const sale of allSales) {
       try {
+        // Skip if no image URL
+        if (!sale.imageUrl) {
+          console.log(`Skipping ${sale.tokenName}: no image URL`);
+          continue;
+        }
+
         // Download image
         const imageResponse = await fetch(sale.imageUrl);
         if (imageResponse.ok) {
-          const imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
+          const contentType = imageResponse.headers.get('content-type') || '';
+          const arrayBuffer = await imageResponse.arrayBuffer();
+
+          // Skip if empty response
+          if (!arrayBuffer || arrayBuffer.byteLength === 0) {
+            console.log(`Skipping ${sale.tokenName}: empty image response`);
+            continue;
+          }
+
+          let imageBuffer: Buffer = Buffer.from(arrayBuffer);
+
+          // Check if it's an SVG (by content-type or content)
+          const bufferStart = imageBuffer.length > 0 ? imageBuffer.toString('utf8', 0, Math.min(100, imageBuffer.length)).toLowerCase() : '';
+          const isSVG = contentType.includes('svg') ||
+                        bufferStart.includes('<svg') ||
+                        bufferStart.includes('<?xml');
+
+          if (isSVG) {
+            console.log(`Converting SVG to PNG for ${sale.tokenName}`);
+            try {
+              // Convert SVG to PNG using resvg
+              const { Resvg } = await import('@resvg/resvg-js');
+              const resvg = new Resvg(imageBuffer, {
+                fitTo: {
+                  mode: 'width',
+                  value: 512, // 512px width for email display
+                },
+              });
+              const pngData = resvg.render();
+              imageBuffer = pngData.asPng();
+              console.log(`Successfully converted ${sale.tokenName} to PNG`);
+            } catch (conversionError) {
+              console.error(`Failed to convert SVG for ${sale.tokenName}:`, conversionError);
+              continue; // Skip this sale if conversion fails
+            }
+          }
 
           // Upload to Supabase
           const fileName = `nft-${sale.tokenId}-${Date.now()}.png`;
@@ -130,16 +173,34 @@ export async function GET() {
             });
 
           if (!uploadError) {
-            const { data: { publicUrl } } = supabase.storage
+            const { data } = supabase.storage
               .from('daily-paintings')
               .getPublicUrl(`nft-sales/${fileName}`);
-            sale.imageUrl = publicUrl;
+
+            if (data?.publicUrl) {
+              sale.imageUrl = data.publicUrl;
+              validSales.push(sale);
+            } else {
+              console.log(`Skipping ${sale.tokenName}: failed to get public URL`);
+            }
+          } else {
+            console.log(`Skipping ${sale.tokenName}: upload failed - ${uploadError.message}`);
           }
         }
       } catch (error) {
         console.error(`Failed to re-host image for ${sale.tokenName}:`, error);
-        // Keep original URL if download fails
+        // Skip this sale if image fails to re-host
       }
+    }
+
+    console.log(`Valid sales with proper images: ${validSales.length} out of ${allSales.length}`);
+
+    if (validSales.length === 0) {
+      return NextResponse.json({
+        success: true,
+        message: 'No valid NFT sales with displayable images found',
+        count: 0,
+      });
     }
 
     // Delete all existing sales before inserting fresh data
@@ -147,7 +208,7 @@ export async function GET() {
     await supabaseAdmin.from('nft_sales').delete().neq('id', 0);
 
     // Insert new sales into database (using upsert to handle duplicates)
-    const salesData = allSales.map((sale) => ({
+    const salesData = validSales.map((sale) => ({
       token_name: sale.tokenName,
       collection_name: sale.collectionName,
       collection_artist: sale.collectionArtist,
