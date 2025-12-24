@@ -111,6 +111,28 @@ const parser = new Parser({
   },
 });
 
+// Sports-related keywords to filter out (Italian)
+const SPORTS_KEYWORDS = [
+  'calcio', 'calciatori', 'calciatore', 'serie a', 'serie b', 'serie c', 'serie d',
+  'partita', 'gol', 'goal', 'pallone', 'pallavolo', 'volley', 'basket', 'pallacanestro',
+  'campionato', 'classifica', 'allenatore', 'mister', 'squadra di calcio',
+  'playoff', 'play-off', 'derby', 'tifosi', 'ultras', 'curva',
+  'scudetto', 'coppa italia', 'champions league', 'europa league',
+  'federazione', 'figc', 'lega calcio', 'arbitro', 'rigore', 'penalty',
+  'pareggio', 'vittoria sportiva', 'sconfitta sportiva',
+  'under 21', 'under 19', 'under 17', 'primavera', 'juniores',
+  'promozione', 'eccellenza', 'prima categoria', 'seconda categoria', 'terza categoria',
+  'dilettanti', 'giovanili', 'torneo di calcio',
+  'hockey', 'rugby', 'tennis', 'ciclismo', 'giro d\'italia', 'tour de france',
+  'sci alpino', 'slalom', 'discesa libera', 'super-g',
+  'atletica', 'maratona', 'podismo',
+];
+
+function isSportsArticle(text: string): boolean {
+  const lowerText = text.toLowerCase();
+  return SPORTS_KEYWORDS.some(keyword => lowerText.includes(keyword));
+}
+
 function createVillagePatterns(): Map<string, RegExp[]> {
   const patterns = new Map<string, RegExp[]>();
 
@@ -172,6 +194,12 @@ export async function GET() {
         const searchText = `${item.title || ''} ${item.contentSnippet || ''} ${
           item.content || ''
         }`.toLowerCase();
+
+        // Skip sports articles
+        if (isSportsArticle(searchText)) {
+          continue;
+        }
+
         const matchedVillages = findMatchingVillages(searchText);
 
         if (matchedVillages.length > 0) {
