@@ -169,9 +169,15 @@ Return ONLY the complete image generation prompt.`;
       });
     }
 
-    // Determine which image model to use (flux by default, imagen if specified)
-    const imageModel = searchParams.get('model') === 'imagen' ? 'imagen' : 'flux';
-    console.log(`Generating image with AI Gateway using ${imageModel === 'flux' ? 'FLUX Pro Ultra' : 'Google Imagen'}...`);
+    // Determine which image model to use (gemini/Nano Banana Pro by default)
+    const modelParam = searchParams.get('model');
+    const imageModel = modelParam === 'flux' ? 'flux' : modelParam === 'imagen' ? 'imagen' : 'gemini';
+    const modelNames: Record<string, string> = {
+      gemini: 'Gemini 3 Pro Image (Nano Banana Pro)',
+      flux: 'FLUX Pro Ultra',
+      imagen: 'Google Imagen',
+    };
+    console.log(`Generating image with AI Gateway using ${modelNames[imageModel]}...`);
 
     // Generate the painting using AI Gateway
     const generatedImage = await generateImageWithAI({
@@ -214,11 +220,17 @@ Return ONLY the complete image generation prompt.`;
 
     console.log('Image uploaded successfully. Public URL:', publicUrl);
 
+    const modelIds: Record<string, string> = {
+      gemini: 'google/gemini-3-pro-image',
+      flux: 'bfl/flux-pro-1.1-ultra',
+      imagen: 'google/imagen-4.0-generate',
+    };
+
     return NextResponse.json({
       painter: todaysPainter,
       sourceImage: selectedImage,
       prompt: imagePrompt,
-      model: imageModel === 'flux' ? 'bfl/flux-pro-1.1-ultra' : 'google/imagen-4.0-generate',
+      model: modelIds[imageModel],
       imageUrl: publicUrl,
     });
 
