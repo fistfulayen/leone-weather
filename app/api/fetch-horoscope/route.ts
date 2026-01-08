@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { anthropic } from '@/lib/claude';
+import { generateTextWithClaude } from '@/lib/ai-gateway';
 
 export async function GET(request: Request) {
   try {
@@ -39,14 +39,9 @@ export async function GET(request: Request) {
 
     const html = await response.text();
 
-    // Use Claude to extract the horoscope content
-    const extraction = await anthropic.messages.create({
-      model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 600,
-      messages: [
-        {
-          role: 'user',
-          content: `Extract the daily horoscope information from this HTML page. Return ONLY a JSON object with these fields:
+    // Use Claude via AI Gateway to extract the horoscope content
+    const extractedText = await generateTextWithClaude({
+      prompt: `Extract the daily horoscope information from this HTML page. Return ONLY a JSON object with these fields:
 {
   "horoscope_text": "the main horoscope prediction and advice text, combined into one coherent paragraph",
   "lucky_colors": "comma-separated list of lucky colors",
@@ -55,12 +50,8 @@ export async function GET(request: Request) {
 
 HTML:
 ${html}`,
-        },
-      ],
+      maxTokens: 600,
     });
-
-    const extractedText =
-      extraction.content[0].type === 'text' ? extraction.content[0].text : '';
 
     // Parse the JSON response
     const jsonMatch = extractedText.match(/\{[\s\S]*\}/);

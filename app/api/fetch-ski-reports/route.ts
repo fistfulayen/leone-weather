@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { anthropic } from '@/lib/claude';
+import { generateTextWithClaude } from '@/lib/ai-gateway';
 
 const SKI_RESORTS = [
   {
@@ -56,14 +56,9 @@ async function scrapeSkiReport(resort: typeof SKI_RESORTS[0]): Promise<SkiReport
 
     const html = await response.text();
 
-    // Use Claude to parse the HTML and extract structured data
-    const claudeResponse = await anthropic.messages.create({
-      model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 1024,
-      messages: [
-        {
-          role: 'user',
-          content: `Extract ski resort snow report data from this HTML page. Return ONLY valid JSON with no markdown formatting, no code blocks, no explanations.
+    // Use Claude via AI Gateway to parse the HTML and extract structured data
+    const textContent = await generateTextWithClaude({
+      prompt: `Extract ski resort snow report data from this HTML page. Return ONLY valid JSON with no markdown formatting, no code blocks, no explanations.
 
 Required JSON structure:
 {
@@ -81,14 +76,9 @@ Required JSON structure:
 }
 
 HTML to parse:
-${html.slice(0, 50000)}`
-        },
-      ],
+${html.slice(0, 50000)}`,
+      maxTokens: 1024,
     });
-
-    const textContent = claudeResponse.content[0].type === 'text'
-      ? claudeResponse.content[0].text
-      : '';
 
     if (!textContent) {
       console.error(`No response from Claude for ${resort.name}`);

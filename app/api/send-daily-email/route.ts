@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { resend } from '@/lib/resend';
 import { supabaseAdmin } from '@/lib/supabase';
-import { anthropic } from '@/lib/claude';
 import { getHeaderEmoji } from '@/lib/weather-emoji';
 import { getSunTimes } from '@/lib/sun-times';
 import { getRecentAQIComparisons, getAQILevel, generateAQIStory, getAQIHealthGuidance, calculateNowCastAQI } from '@/lib/air-quality';

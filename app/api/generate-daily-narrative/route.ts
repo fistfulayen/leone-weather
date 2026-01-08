@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { anthropic } from '@/lib/claude';
+import { generateTextWithClaude } from '@/lib/ai-gateway';
 import { getMoonPhaseInfo } from '@/lib/weather-emoji';
 
 export async function GET() {
@@ -311,18 +311,11 @@ KEEP IT CONCISE: Each paragraph should be 3-4 sentences maximum. Get to the poin
 
 Sign off: "— Louisina 🦁"`;
 
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 900,
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
+    // Generate narrative using AI Gateway
+    const narrative = await generateTextWithClaude({
+      prompt,
+      maxTokens: 900,
     });
-
-    const narrative = response.content[0].type === 'text' ? response.content[0].text : '';
 
     if (!narrative) {
       return NextResponse.json(

@@ -1,9 +1,5 @@
-import Anthropic from '@anthropic-ai/sdk';
+import { generateChatWithClaude } from './ai-gateway';
 import { supabaseAdmin } from './supabase';
-
-export const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-});
 
 interface WeatherContext {
   current: any;
@@ -62,8 +58,8 @@ Indoor: ${weatherContext.current?.indoor_temp_c?.toFixed(1)}°C, ${weatherContex
 
 Today's Stats: High ${weatherContext.today?.high}°C, Low ${weatherContext.today?.low}°C`;
 
-  // Build messages array
-  const messages: Anthropic.MessageParam[] = [];
+  // Build messages array for AI Gateway
+  const messages: Array<{ role: 'user' | 'assistant'; content: string }> = [];
 
   // Add conversation history
   for (const msg of history) {
@@ -73,23 +69,18 @@ Today's Stats: High ${weatherContext.today?.high}°C, Low ${weatherContext.today
     );
   }
 
-  // Add current message
+  // Add current message with context
   messages.push({
     role: 'user',
     content: `${contextMessage}\n\nUser question: ${userMessage}`
   });
 
-  // Call Claude
-  const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-5-20250929',
-    max_tokens: 1024,
-    system: LOUISINA_SYSTEM_PROMPT,
+  // Call Claude via AI Gateway
+  const assistantMessage = await generateChatWithClaude({
     messages,
+    system: LOUISINA_SYSTEM_PROMPT,
+    maxTokens: 1024,
   });
-
-  const assistantMessage = response.content[0].type === 'text'
-    ? response.content[0].text
-    : '';
 
   // Save to conversation history
   await saveConversation(sessionId, userMessage, assistantMessage, weatherContext);

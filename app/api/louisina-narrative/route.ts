@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { anthropic } from '@/lib/claude';
+import { generateTextWithClaude } from '@/lib/ai-gateway';
 
 export async function GET() {
   try {
@@ -187,18 +187,11 @@ MANDATORY BIODYNAMIC RULE: If you mention the word "biodynamic" ANYWHERE in your
 
 Sign off: "— Louisina 🦁"`;
 
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 900,
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
+    // Generate narrative using AI Gateway
+    const narrative = await generateTextWithClaude({
+      prompt,
+      maxTokens: 900,
     });
-
-    const narrative = response.content[0].type === 'text' ? response.content[0].text : '';
 
     // Cache the narrative for 5 minutes to keep it fresh
     return NextResponse.json(
