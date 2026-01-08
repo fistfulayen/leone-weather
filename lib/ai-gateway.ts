@@ -106,15 +106,21 @@ export async function analyzeImageWithClaude(options: {
 }
 
 /**
- * Generate an image using FLUX Pro or Imagen via AI Gateway
+ * Generate an image using AI Gateway
  *
- * Uses dedicated image models (not multimodal LLMs)
+ * Default: Gemini 3 Pro Image (Nano Banana Pro)
+ * Alternatives: FLUX Pro, Imagen
  */
 export async function generateImageWithAI(options: {
   prompt: string;
-  model?: 'flux' | 'imagen';
+  model?: 'gemini' | 'flux' | 'imagen';
 }): Promise<{ base64: string; mimeType: string }> {
-  const modelId = options.model === 'imagen' ? MODELS.IMAGEN : MODELS.FLUX_PRO;
+  const modelId =
+    options.model === 'flux'
+      ? MODELS.FLUX_PRO
+      : options.model === 'imagen'
+        ? MODELS.IMAGEN
+        : MODELS.GEMINI_IMAGE;
 
   const result = await generateImage({
     model: gateway.imageModel(modelId),
